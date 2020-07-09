@@ -3,7 +3,6 @@ import sys
 import os
 
 def main(s):
-    print(sys.argv)
     if len(sys.argv) != 3:
         print('Usage: <binary> <input>')
         exit(os.EX_USAGE)
