@@ -32,9 +32,6 @@ def isXml(s):
 
 
 def isCsv(s):
-    # IO_string = StringIO(string)
-    # df = pd.read_csv(IO_string, sep=",")
-    # print(df)
     try:
         csv.Sniffer().sniff(s, ',')
         # print(f"Does this csv have a header: {csv.Sniffer().has_header(s)}")
@@ -74,4 +71,19 @@ if __name__ == '__main__':
     print('Json: T') if isJson(input_string) != RET_FAIL else print('Json: F')
     print('Xml: T') if isXml(input_string) != RET_FAIL else print('Xml: F')
     print('Csv: T') if isCsv(input_string) != RET_FAIL else print('Csv: F')
-    print('Multiline text: T') if isMultilineText(input_string) != RET_FAIL else print('Multiline text: F')
+    print('Multiline text: T\nSingleline text: F') if isMultilineText(input_string) != RET_FAIL else print('Multiline text: F\nSingleline text: T')
+    
+    if isJson(input_string) != RET_FAIL:
+        print(f"{file_name} is of type JSON")
+
+    elif isXml(input_string) != RET_FAIL:
+        print(f"{file_name} is of type XML")
+    
+    elif isCsv(input_string) != RET_FAIL:
+        print(f"{file_name} is of type CSV")
+
+    elif isMultilineText(input_string) != RET_FAIL:
+        print(f"{file_name} is of type multiline text")
+    
+    else:
+        print(f"{file_name} is of type singleline text")
