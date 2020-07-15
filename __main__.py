@@ -1,6 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # This just calls the src folder as a module
-from .fuzzylogic import main
+try:
+    from fuzzylogic import main
+except ModuleNotFoundError:
+    try:
+        from .fuzzylogic import main
+    except ModuleNotFoundError:
+        print('''
+    Fatal: Failed to import main
+''')
+        exit(1)
 
-main('main.py was called from fuzzy-logic-6447')
+main()

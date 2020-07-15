@@ -1,15 +1,22 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 import os
+print(__name__)
+try:
+    from fuzzylogic import fuzzer
+except ModuleNotFoundError:
+    # sys.path needs a small hacky-hack if run as ./main.py instead of py -m fuzzylogic
+    sys.path.append('.')
+    from fuzzylogic import fuzzer
 
-def main(s):
+
+def main():
     if len(sys.argv) != 3:
         print('Usage: <binary> <input>')
         exit(os.EX_USAGE)
-    print(s)
-    print(f'binary: {sys.argv[1]}')
-    print(f'input: {sys.argv[2]}')
+    fuzzer.fuzz(sys.argv[1], sys.argv[2])
     exit(os.EX_OK)
 
+
 if __name__ == '__main__':
-	main('main.py was called directly')
+    main()
