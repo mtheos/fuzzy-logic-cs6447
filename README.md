@@ -6,3 +6,4 @@ From the cloned folder:
 From the parent folder
    Run as `python3 -m fuzzylogic <binary> <input>`
 
+To compile our tests run ```make```` in ```test_binaries/```
