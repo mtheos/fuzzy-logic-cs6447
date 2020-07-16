@@ -10,6 +10,7 @@ __pycache__/
 *.so
 
 test_binaries/*.binary
+bad.txt
 
 # Distribution / packaging
 .Python
