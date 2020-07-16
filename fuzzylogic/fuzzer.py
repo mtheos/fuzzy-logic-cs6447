@@ -10,3 +10,7 @@ def fuzz(binary, input_file):
     print(f'Csv: {mutator.isCsv(content)}')
     print(f'Xml: {mutator.isXml(content)}')
     print(f'MultilineText: {mutator.isMultilineText(content)}')
+    print()
+    runner = executor.runner()
+    code = runner.run_process(binary, content)
+    print(f'Exit code: {code}{" Segfault! :)" if code == -11 else " :("}')
