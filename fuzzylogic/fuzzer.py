@@ -15,7 +15,7 @@ def fuzz(binary, input_file):
     orchestrator = MutatorQueueOrchestrator(t)
     orchestrator.insert(PriorityShit(content, 1))
     while len(orchestrator):
-        code = runner.run_process(binary, orchestrator.get()) # big todo (): if result code is not 0, save bad input to file.
+        code = runner.run_process(binary, orchestrator.get()) # big todo (mikey): if result code is not 0, save bad input to file.
         if code != 0: #segfault
             print(f'Exit code: {code}{" Segfault! :)" if code == -11 else " :("}')
             exit(0)
@@ -29,6 +29,7 @@ class MutatorQueueOrchestrator:
         self.q = [] #todo: import priority_queue
 
                     #big TODO: make a big hashmap mapping every input we've tried ----> its result
+                    #Andrew
     
     def insert(self, priority_shit ):
         self.q.append(priority_shit)

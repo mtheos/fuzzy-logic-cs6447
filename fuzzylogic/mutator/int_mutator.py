@@ -1,4 +1,6 @@
-class IntMutator :
+#these all just return literally 1 thing
+#frances and aran
+class IntMutator : 
     def __init__(self):
         self.seed = 0
     def mutate(self, i):
