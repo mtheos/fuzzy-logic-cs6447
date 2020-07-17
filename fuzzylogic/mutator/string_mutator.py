@@ -14,13 +14,13 @@ class StringMutator:
         if s == "":
             return s
         pos = random.randint(0, len(s) - 1)
-        print("--Deleting", repr(s[pos]), "at", pos)
+        # print("--Deleting", repr(s[pos]), "at", pos)
         return s[:pos] + s[pos + 1:]
 
     def insert_rand_chars(self,s):
         pos = random.randint(0, len(s))
         random_character = chr(random.randrange(32, 127))
-        print("--Inserting", repr(random_character), "at", pos)
+        # print("--Inserting", repr(random_character), "at", pos)
         return s[:pos] + random_character + s[pos:]
 
     def flip_rand_chars(self,s):
@@ -30,5 +30,5 @@ class StringMutator:
         c = s[pos]
         bit = 1 << random.randint(0, 6)
         new_c = chr(ord(c) ^ bit)
-        print("--Flipping", bit, "in", repr(c) + ", giving", repr(new_c))
+        # print("--Flipping", bit, "in", repr(c) + ", giving", repr(new_c))
         return s[:pos] + new_c + s[pos + 1:]
