@@ -1,17 +1,18 @@
 import json
 from itertools import combinations
 from .int_mutator import IntMutator
+from .list_mutator import ListMutator
 from .float_mutator import FloatMutator
-from .int_mutator import ArrayMutator
+from .object_mutator import ObjectMutator
+from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
-# from .int_mutator import ObjectMutator
 
 
 class JsonMutator:
     def __init__(self):
         self._seed = 0
-        self._original = None  # Dictionary of json
-        self._keys = None  # List of keys in json
+        self._original = None    # Dictionary of json
+        self._keys = None        # List of keys in json
         self._field_type = None  # Dictionary of key:type
 
     # return a generator (i.e. list)
@@ -32,8 +33,7 @@ class JsonMutator:
 
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)
-        if self._field_type[key] == 'int':
-            output[key] = type_mutator().mutate(output[key])
+        output[key] = type_mutator().mutate(output[key])
 
     def _analyse_(self, _input):
         self._original = json.loads(_input)
@@ -48,39 +48,25 @@ class JsonMutator:
 
     @staticmethod
     def _get_type_(v):
-        if v is None:
-            return 'none'
-        elif isinstance(v, str):
-            return 'str'
-        elif isinstance(v, int):
-            return 'int'
-        elif isinstance(v, float):
-            return 'float'
-        elif isinstance(v, list):
-            return 'list'
-        elif isinstance(v, dict):
-            return 'dict'
-        elif isinstance(v, bool):
-            return 'bool'
-        else:
-            return 'unknown'
-            # raise TypeError(f'*** {v} is an unknown type ***')
+        field_type = type(v)
+        if field_type not in [None, str, int, float, bool, list, dict]:
+            raise TypeError(f'*** {v} is an unknown type ***')
+        return field_type
 
     def _get_mutator_(self, key):
-        if self._field_type[key] == 'none':
+        if self._field_type[key] is None:
             raise TypeError('What even is a "none" mutator?')
-        elif self._field_type[key] == 'str':
-            raise TypeError('String mutator not found')
-        elif self._field_type[key] == 'int':
+        elif self._field_type[key] is str:
+            return StringMutator
+        elif self._field_type[key] is int:
             return IntMutator
-        elif self._field_type[key] == 'float':
+        elif self._field_type[key] is float:
             return FloatMutator
-        elif self._field_type[key] == 'list':
-            return ArrayMutator
-        elif self._field_type[key] == 'dict':
-            raise TypeError('Dict/Object mutator not found')
-            # return ObjectMutator
-        elif self._field_type[key] == 'bool':
+        elif self._field_type[key] is bool:
             return BooleanMutator
-        elif self._field_type[key] == 'unknown':
+        elif self._field_type[key] is list:
+            return ListMutator
+        elif self._field_type[key] is dict:
+            return ObjectMutator
+        else:
             raise TypeError(f'*** {key} has an unknown type ***')

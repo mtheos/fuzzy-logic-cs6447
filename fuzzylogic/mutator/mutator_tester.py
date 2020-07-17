@@ -1,9 +1,9 @@
-from string_mutator import *
-from int_mutator import IntMutator
-from float_mutator import *
-from boolean_mutator import *
-from object_mutator import *
-from list_mutator import *
+from .int_mutator import IntMutator
+from .list_mutator import ListMutator
+from .float_mutator import FloatMutator
+from .object_mutator import ObjectMutator
+from .string_mutator import StringMutator
+from .boolean_mutator import BooleanMutator
 # string = "asdfghjkl"
 
 # mut = StringMutator()
@@ -32,9 +32,9 @@ from list_mutator import *
 #     mutation = lol.mutate(mutation)
 #     print(f"{i}: {mutation}")
 
-l = [1,2,3]
-listy = ListMutator()
-mutation = l
+lis = [1, 2, 3]
+l_mutator = ListMutator()
+mutation = lis
 for i in range(15):
-    mutation = listy.mutate(mutation)
+    mutation = l_mutator.mutate(mutation)
     print(mutation)

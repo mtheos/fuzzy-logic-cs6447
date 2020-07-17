@@ -17,13 +17,13 @@ class StringMutator:
         # print("--Deleting", repr(s[pos]), "at", pos)
         return s[:pos] + s[pos + 1:]
 
-    def insert_rand_chars(self,s):
+    def insert_rand_chars(self, s):
         pos = random.randint(0, len(s))
         random_character = chr(random.randrange(32, 127))
         # print("--Inserting", repr(random_character), "at", pos)
         return s[:pos] + random_character + s[pos:]
 
-    def flip_rand_chars(self,s):
+    def flip_rand_chars(self, s):
         if s == "":
             return s
         pos = random.randint(0, len(s) - 1)
