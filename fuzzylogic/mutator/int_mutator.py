@@ -21,13 +21,6 @@ class ArrayMutator :
         self.seed += 1
         return i
 
-class StringMutator :
-    def __init__(self):
-        self.seed = 0
-    def mutate(self, i):
-        self.seed += 1
-        return i
-
 class BooleanMutator :
     def __init__(self):
         self.seed = 0
