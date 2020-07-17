@@ -1,8 +1,8 @@
 from fuzzylogic import mutator, executor
 from queue import PriorityQueue
 import json
-import sys
 import collections
+
 
 def fuzz(binary, input_file):
     print(f'binary: {binary}')
@@ -16,9 +16,9 @@ def fuzz(binary, input_file):
     elif mutator.isCsv(content):
         mutator_instance = mutator.CsvMutator()
     elif mutator.isMultilineText(content):
-        mutator_instance = mutator.CsvMutator()  #NOTE: this is TEMPORARY for ez debugging
+        mutator_instance = mutator.CsvMutator()  # NOTE: this is TEMPORARY for ez debugging
     else:
-        mutator_instance = mutator.CsvMutator()  #NOTE: this is TEMPORARY for ez debugging
+        mutator_instance = mutator.CsvMutator()  # NOTE: this is TEMPORARY for ez debugging
 
     print(f'mutator: {mutator_instance}')
     runner = executor.Runner()
