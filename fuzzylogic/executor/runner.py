@@ -2,6 +2,7 @@ from subprocess import Popen, PIPE
 from collections import defaultdict
 # from pwn import *
 
+
 class Runner:
     _exit_codes_ = defaultdict(lambda: 'Nope :(')
     _exit_codes_[-6] = 'Stack Smashing! :)'

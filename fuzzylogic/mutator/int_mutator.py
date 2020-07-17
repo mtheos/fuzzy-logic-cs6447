@@ -4,6 +4,7 @@ import random
 class IntMutator : 
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         options = [self.add_mutation, self.minus_mutation]
         mutator = random.choice(options)
@@ -15,37 +16,47 @@ class IntMutator :
         i = i - random.randint(1,1000000)
         return i
 
-class FloatMutator :
+
+class FloatMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class ArrayMutator :
+
+class ArrayMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class BooleanMutator :
+
+class BooleanMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class NullMutator :
+
+class NullMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class ObjectMutator :
+
+class ObjectMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i

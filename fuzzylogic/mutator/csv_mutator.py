@@ -1,4 +1,4 @@
-class CsvMutator :
+class CsvMutator:
     def __init__(self):
         self.seed = 0
 
@@ -7,6 +7,5 @@ class CsvMutator :
         self.seed += 1
         for x in ['', '', csv_object]:
             yield x
-
-        #todo call string_mutator or other stuff if you want. 
-        #aran and mikey
+        # todo call string_mutator or other stuff if you want.
+        # aran and mikey
