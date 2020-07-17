@@ -9,6 +9,7 @@ RET_JSON = 1
 RET_XML = 2
 RET_CSV = 3
 RET_MULTILINE_TEXT = 4
+RET_SINGLELINE_TEXT = 5
 
 
 def isJson(s):
@@ -53,6 +54,18 @@ def isMultilineText(s):
         return RET_FAIL
     
     return RET_MULTILINE_TEXT
+
+def detect(s):
+    if isJson(s) != RET_FAIL:
+       return RET_JSON 
+    elif isXml(s) != RET_FAIL:
+        return RET_XML
+    elif isCsv(s) != RET_FAIL:
+        return RET_CSV
+    elif isMultilineText(s) != RET_FAIL:
+        return RET_MULTILINE_TEXT
+    else:
+        return RET_SINGLELINE_TEXT
 
 
 if __name__ == '__main__':
