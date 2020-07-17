@@ -1,43 +1,56 @@
-#these all just return literally 1 thing
-#frances and aran
-class IntMutator : 
+# these all just return literally 1 thing
+# frances and aran
+
+
+class IntMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class FloatMutator :
+
+class FloatMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class ArrayMutator :
+
+class ArrayMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class BooleanMutator :
+
+class BooleanMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class NullMutator :
+
+class NullMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
         self.seed += 1
         return i
 
-class ObjectMutator :
+
+class ObjectMutator:
     def __init__(self):
         self.seed = 0
+
     def mutate(self, i):
-        seed += 1
+        self.seed += 1
         return i
