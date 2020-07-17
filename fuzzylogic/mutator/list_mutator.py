@@ -14,7 +14,6 @@ class ListMutator:
         self.seed += 1
         options = [self.add_elem, self.remove_elem, self.mutate_type]
         mutator = random.choice(options)
-
         return mutator(lis)
 
     def swap_elements(self, lis):
@@ -81,7 +80,7 @@ class ListMutator:
         return float(random.uniform(0, 10000000))
 
     def new_str(self):
-        string = "hello"
+        string = 'hello'
         mut = StringMutator()
         for i in range(0, 24):
             string = mut.mutate(string)
