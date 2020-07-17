@@ -16,7 +16,6 @@ def fuzz(binary, input_file):
         mutator_instance = None
     else:
         mutator_instance = None
-
     print(f'mutator: {mutator_instance}')
     runner = executor.Runner()
     orchestrator = MutatorQueueOrchestrator(mutator_instance)
@@ -26,8 +25,11 @@ def fuzz(binary, input_file):
         code = runner.run_process(binary, _input)  # big todo (mikey): if result code is not 0, save bad input to file.
         if code != 0:
             print(f'Exit code: {code} => {runner.parse_code(code)}')
-            with open('bad.txt', 'w') as f:
-                f.write(_input + '\n')
+            print('\n' + '*' * 20)
+            print(f"\n\nI'm just not writing output right now... Uncomment the lines below this to save to file :)\n\n")
+            print('*' * 20)
+            # with open('bad.txt', 'w') as f:
+            #     f.write(_input + '\n')
             break
     else:
         print("We dun fucked up... :'(")
