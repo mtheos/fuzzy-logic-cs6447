@@ -1,11 +1,10 @@
 import json
 from itertools import combinations
 from .int_mutator import IntMutator
-from .list_mutator import ListMutator
 from .float_mutator import FloatMutator
-from .object_mutator import ObjectMutator
 from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
+from .complex_mutators import ListMutator, ObjectMutator
 
 
 class JsonMutator:
@@ -29,7 +28,7 @@ class JsonMutator:
                 for key in keys_to_mutate:
                     self._mutate_(output, key)
                 self._seed += 1
-                yield output
+                yield json.dumps(output)
 
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)
