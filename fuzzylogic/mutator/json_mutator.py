@@ -1,6 +1,10 @@
 import json
 from itertools import combinations
-from .int_mutator import IntMutator, FloatMutator, ArrayMutator, BooleanMutator, NullMutator, ObjectMutator
+from .int_mutator import IntMutator
+from .float_mutator import FloatMutator
+from .int_mutator import ArrayMutator
+from .boolean_mutator import BooleanMutator
+# from .int_mutator import ObjectMutator
 
 
 class JsonMutator:
@@ -64,7 +68,7 @@ class JsonMutator:
 
     def _get_mutator_(self, key):
         if self._field_type[key] == 'none':
-            return NullMutator
+            raise TypeError('What even is a "none" mutator?')
         elif self._field_type[key] == 'str':
             raise TypeError('String mutator not found')
         elif self._field_type[key] == 'int':
@@ -74,7 +78,8 @@ class JsonMutator:
         elif self._field_type[key] == 'list':
             return ArrayMutator
         elif self._field_type[key] == 'dict':
-            return ObjectMutator
+            raise TypeError('Dict/Object mutator not found')
+            # return ObjectMutator
         elif self._field_type[key] == 'bool':
             return BooleanMutator
         elif self._field_type[key] == 'unknown':
