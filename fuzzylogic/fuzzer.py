@@ -1,4 +1,5 @@
 from fuzzylogic import mutator, executor
+from queue import PriorityQueue
 
 
 def fuzz(binary, input_file):
@@ -20,13 +21,13 @@ def fuzz(binary, input_file):
     runner = executor.Runner()
     orchestrator = MutatorQueueOrchestrator(mutator_instance)
     orchestrator.insert(PriorityShit(content, 1))
-    while len(orchestrator):
+    while not orchestrator.empty():
         _input = orchestrator.get()
         code = runner.run_process(binary, _input)  # big todo (mikey): if result code is not 0, save bad input to file.
         if code != 0:
             print(f'Exit code: {code} => {runner.parse_code(code)}')
             print('\n' + '*' * 20)
-            print(f"\n\nI'm just not writing output right now... Uncomment the lines below this to save to file :)\n\n")
+            print(f"I'm just not writing output right now...\nUncomment the lines below this to save to file :)")
             print('*' * 20)
             # with open('bad.txt', 'w') as f:
             #     f.write(_input + '\n')
@@ -38,30 +39,34 @@ def fuzz(binary, input_file):
 class MutatorQueueOrchestrator:
     def __init__(self, mutator_instance):
         self._mutator = mutator_instance
-        self._q = []  # todo: import priority_queue
+        self._q = PriorityQueue()
         #  big TODO: make a big hashmap mapping every input we've tried ----> its result
         #  Andrew
 
     def insert(self, priority_shit):
-        self._q.append(priority_shit)
+        self._q.put(priority_shit)
 
     def get(self):
-        to_mutate = self._q.pop(0)
+        to_mutate = self._q.get()
         for mutation in self._mutator.mutate(to_mutate.data):
-            self._q.append(PriorityShit(mutation, to_mutate.priority + 1))
+            self._q.put(PriorityShit(mutation, to_mutate.priority + 1))
         return to_mutate.data
 
-    def __len__(self):
-        return len(self._q)
-
     def __repr__(self):
-        return f'Items: {len(self._q)}'
+        return f'Items: {len(self._q.queue)}'
+
+    def empty(self):
+        return self._q.empty()
 
 
 class PriorityShit:
     def __init__(self, data, priority):
         self.data = data
         self.priority = priority
+
+    # from what I can see, PriorityQueue only uses < comparisons
+    def __lt__(self, other):
+        return self.priority < other.priority
 
     def __repr__(self):
         return f'({self.priority}) "{self.data}"'

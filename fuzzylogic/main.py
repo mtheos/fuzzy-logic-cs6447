@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import sys
 import os
-print(__name__)
 try:
     from fuzzylogic import fuzzer
 except ModuleNotFoundError:
