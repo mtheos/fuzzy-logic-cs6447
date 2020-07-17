@@ -26,6 +26,8 @@ from object_mutator import *
 dictionary = {"Arushi" : 22, "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
 
 lol = ObjectMutator()
-lol.add_kv(dictionary)
-
-print(dictionary)
+print(f"== {dictionary} == ")
+mutation = dictionary
+for i in range(0,15):
+    mutation = lol.mutate(mutation)
+    print(f"{i}: {mutation}")
