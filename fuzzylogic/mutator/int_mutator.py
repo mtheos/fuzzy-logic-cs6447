@@ -18,15 +18,6 @@ class IntMutator :
         i = i - random.randint(1,1000000)
         return i
 
-class ArrayMutator:
-    def __init__(self):
-        self.seed = 0
-
-    def mutate(self, i):
-        self.seed += 1
-        return i
-
-
 # class NullMutator:
 #     def __init__(self):
 #         self.seed = 0

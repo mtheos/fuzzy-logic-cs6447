@@ -3,7 +3,7 @@ from int_mutator import IntMutator
 from float_mutator import *
 from boolean_mutator import *
 from object_mutator import *
-
+from list_mutator import *
 # string = "asdfghjkl"
 
 # mut = StringMutator()
@@ -23,11 +23,18 @@ from object_mutator import *
 # mut = BooleanMutator()
 # print(mut.mutate(result))
 
-dictionary = {"Arushi" : 22, "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
+# dictionary = {"Arushi" : 22, "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
 
-lol = ObjectMutator()
-print(f"== {dictionary} == ")
-mutation = dictionary
-for i in range(0,15):
-    mutation = lol.mutate(mutation)
-    print(f"{i}: {mutation}")
+# lol = ObjectMutator()
+# print(f"== {dictionary} == ")
+# mutation = dictionary
+# for i in range(0,15):
+#     mutation = lol.mutate(mutation)
+#     print(f"{i}: {mutation}")
+
+l = [1,2,3]
+listy = ListMutator()
+mutation = l
+for i in range(15):
+    mutation = listy.mutate(mutation)
+    print(mutation)
