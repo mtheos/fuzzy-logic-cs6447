@@ -1,7 +1,8 @@
 from fuzzylogic import mutator, executor
 from queue import PriorityQueue
-
+import json
 import sys
+import collections
 
 def fuzz(binary, input_file):
     print(f'binary: {binary}')
@@ -50,9 +51,13 @@ class MutatorQueueOrchestrator:
     def get(self):
         to_mutate = self._q.get()
         for mutation in self._mutator.mutate(to_mutate.data):
-            if mutation not in self.seen:
+            if isinstance(mutation, collections.Hashable):
+                mutation_key = mutation
+            else:
+                mutation_key = json.dumps(mutation)
+            if mutation_key not in self.seen:
                 self._q.put(PriorityShit(mutation, to_mutate.priority + 1))
-                self.seen[mutation] = 1
+                self.seen[mutation_key] = 1
 
             
         return to_mutate.data
