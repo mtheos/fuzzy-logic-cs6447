@@ -32,6 +32,8 @@ class ObjectMutator:
         return obj
 
     def remove_kv(self, obj):
+        if len(list(obj.keys())) == 0:
+            return obj
         rand_key = random.choice(list(obj.keys()))
         print(f'-- Removed: {rand_key} {obj[rand_key]}')
         del obj[rand_key]

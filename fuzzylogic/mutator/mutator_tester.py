@@ -42,6 +42,6 @@ from .complex_mutators import ListMutator, ObjectMutator
 lis = [1, 2, 3]
 l_mutator = ListMutator()
 mutation = lis
-for i in range(15):
+for i in range(100):
     mutation = l_mutator.mutate(mutation)
     print(mutation)
