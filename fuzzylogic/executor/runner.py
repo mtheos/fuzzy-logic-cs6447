@@ -1,3 +1,5 @@
+
+from collections import defaultdict
 # import pwn
 import os
 import re
@@ -29,8 +31,10 @@ class Runner:
 
     def _run_process_cmd_(self, binary, _input):
         _input = re.sub('(!|\$|#|&|\'|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
-        print('\n\n\nRunning with input\n', _input)
+        print('\n\n##########\nRunning with input')
+        print(_input)
         code = os.system(f'{binary} <<EOF\n{_input}\nEOF > /deb/null')
+        print('##########\n\n')
         return code
 
     # def _run_process_pwn_tools_(self, binary, _input):
