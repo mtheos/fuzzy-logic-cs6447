@@ -10,6 +10,7 @@ from .complex_mutators import ListMutator, ObjectMutator
 class JsonMutator:
     def __init__(self):
         self._seed = 0
+        self._mutators = {}
         self._original = None    # Dictionary of json
         self._keys = None        # List of keys in json
         self._field_type = None  # Dictionary of key:type
@@ -53,19 +54,23 @@ class JsonMutator:
         return field_type
 
     def _get_mutator_(self, key):
+        if self._field_type[key] in self._mutators:
+            return self._mutators[self._field_type[key]]
+
         if self._field_type[key] is None:
             raise TypeError('What even is a "none" mutator?')
         elif self._field_type[key] is str:
-            return StringMutator
+            self._mutators[str] = StringMutator()
         elif self._field_type[key] is int:
-            return IntMutator
+            self._mutators[int] = IntMutator()
         elif self._field_type[key] is float:
-            return FloatMutator
+            self._mutators[float] = FloatMutator()
         elif self._field_type[key] is bool:
-            return BooleanMutator
+            self._mutators[bool] = BooleanMutator()
         elif self._field_type[key] is list:
-            return ListMutator
+            self._mutators[list] = ListMutator()
         elif self._field_type[key] is dict:
-            return ObjectMutator
+            self._mutators[dict] = ObjectMutator()
         else:
             raise TypeError(f'*** {key} has an unknown type ***')
+        return self._mutators[self._field_type[key]]
