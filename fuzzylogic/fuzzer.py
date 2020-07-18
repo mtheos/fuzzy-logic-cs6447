@@ -27,7 +27,8 @@ def fuzz(binary, input_file):
     orchestrator.insert(PriorityShit(mutator_instance.empty(), 0))
     while len(orchestrator):
         _input = orchestrator.get()
-        code = runner.run_process(binary, _input)  # big todo (mikey): if result code is not 0, save bad input to file.
+        # code = runner.run_process(binary, _input)
+        code = runner.run_process(binary, _input, fake=True)  # always return 0
         if code != 0:
             print(f'Exit code: {code} => {runner.parse_code(code)}')
             print('\n' + '*' * 20)
@@ -52,15 +53,9 @@ class MutatorQueueOrchestrator:
     def get(self):
         to_mutate = self._q.get()
         for mutation in self._mutator.mutate(to_mutate.data):
-            if isinstance(mutation, collections.Hashable):
-                mutation_key = mutation
-            else:
-                mutation_key = json.dumps(mutation)
-            if mutation_key not in self.seen:
+            if mutation not in self.seen:
                 self._q.put(PriorityShit(mutation, to_mutate.priority + 1))
-                self.seen[mutation_key] = 1
-
-            
+                self.seen[mutation] = 1
         return to_mutate.data
 
     def __len__(self):
@@ -72,8 +67,9 @@ class MutatorQueueOrchestrator:
     def empty(self):
         return self._q.empty()
 
-#todo(Andrew): rename this to queue_item, and make another class for the 
-#actual priority
+
+# todo(Andrew): rename this to queue_item, and make another class for the
+# actual priority
 class PriorityShit:
     def __init__(self, data, priority):
         self.data = data
@@ -90,7 +86,7 @@ class PriorityShit:
         return self.priority_function(self.priority) > self.priority_function(data2.priority)
 
     def __eq__(self, x):
-        return self.__repr__() ==  x.__repr__() # equality by value
+        return self.__repr__() == x.__repr__()  # equality by value
 
     def __hash__(self):
         return self.__repr__().__hash__()

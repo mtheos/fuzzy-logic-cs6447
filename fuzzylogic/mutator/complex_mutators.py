@@ -28,14 +28,14 @@ class ObjectMutator:
             self.new_float]  # fill options with add_xyz functions
         mutator = random.choice(options)
         obj[f'new_key_{self.seed}'] = mutator()
-        print(f'-- Added: "new_key_{self.seed} {obj[f"new_key_{self.seed}"]}')
+        # print(f'-- Added: "new_key_{self.seed} {obj[f"new_key_{self.seed}"]}')
         return obj
 
     def remove_kv(self, obj):
         if len(list(obj.keys())) == 0:
             return obj
         rand_key = random.choice(list(obj.keys()))
-        print(f'-- Removed: {rand_key} {obj[rand_key]}')
+        # print(f'-- Removed: {rand_key} {obj[rand_key]}')
         del obj[rand_key]
         return obj
 
@@ -60,7 +60,7 @@ class ObjectMutator:
             obj[rand_key] = self.mutate(obj[rand_key])
         elif field_type is None:
             print("Null mutator goes brrrrrr (doesn't exist, pls implement???)")
-        print(f'-- Mutated: {rand_key} {obj[rand_key]}')
+        # print(f'-- Mutated: {rand_key} {obj[rand_key]}')
         return obj
 
     def new_int(self):
@@ -121,14 +121,14 @@ class ListMutator:
             self.new_float]  # fill options with add_xyz functions
         mutator = random.choice(options)
         lis.append(mutator())
-        print(f'-- Added: {lis[::-1]}')
+        # print(f'-- Added: {lis[::-1]}')
         return lis
 
     def remove_elem(self, lis):
         if len(lis) < 1:
             return lis
         rand_pos = random.randint(0, len(lis) - 1)
-        print(f'-- Removed: {lis[rand_pos]}')
+        # print(f'-- Removed: {lis[rand_pos]}')
         del lis[rand_pos]
         return lis
 
@@ -155,7 +155,7 @@ class ListMutator:
         elif field_type is None:
             print("Null mutator goes brrrrrr (doesn't exist, pls implement???)")
 
-        print(f'-- Mutated: {rand_pos} {lis[rand_pos]}')
+        # print(f'-- Mutated: {rand_pos} {lis[rand_pos]}')
 
         return lis
 

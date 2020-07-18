@@ -17,6 +17,10 @@ class JsonMutator:
 
     # return a generator (i.e. list)
     def mutate(self, json_input):
+        print('**********')
+        print('Called with input')
+        print(json_input)
+        print('\n\n\n')
         self._analyse_(json_input)
         # combinations will return objects like this for i = 1 to n
         # [(key1,), (key2,), (key3,)]
@@ -25,10 +29,11 @@ class JsonMutator:
         for i in range(1, len(self._keys) + 1):
             for keys_to_mutate in combinations(self._keys, i):
                 output = dict(self._original)
-                print('mutating:', ', '.join(keys_to_mutate))
+                # print('mutating:', ', '.join(keys_to_mutate))
                 for key in keys_to_mutate:
                     self._mutate_(output, key)
                 self._seed += 1
+                print('Next mutation =>', json.dumps(output))
                 yield json.dumps(output)
 
     def _mutate_(self, output, key):
@@ -44,7 +49,7 @@ class JsonMutator:
         self._field_type = {}
         for k, v in self._original.items():
             self._field_type[k] = self._get_type_(v)
-            print(f'{k} => {self._field_type[k]}')
+            # print(f'Key {k} => type {self._field_type[k]}')
 
     @staticmethod
     def _get_type_(v):
@@ -54,25 +59,23 @@ class JsonMutator:
         return field_type
 
     def _get_mutator_(self, key):
-        if self._field_type[key] in self._mutators:
-            return self._mutators[self._field_type[key]]
-
-        if self._field_type[key] is None:
-            raise TypeError('What even is a "none" mutator?')
-        elif self._field_type[key] is str:
-            self._mutators[str] = StringMutator()
-        elif self._field_type[key] is int:
-            self._mutators[int] = IntMutator()
-        elif self._field_type[key] is float:
-            self._mutators[float] = FloatMutator()
-        elif self._field_type[key] is bool:
-            self._mutators[bool] = BooleanMutator()
-        elif self._field_type[key] is list:
-            self._mutators[list] = ListMutator()
-        elif self._field_type[key] is dict:
-            self._mutators[dict] = ObjectMutator()
-        else:
-            raise TypeError(f'*** {key} has an unknown type ***')
+        if self._field_type[key] not in self._mutators:
+            if self._field_type[key] is None:
+                raise TypeError('What even is a "none" mutator?')
+            elif self._field_type[key] is str:
+                self._mutators[str] = StringMutator()
+            elif self._field_type[key] is int:
+                self._mutators[int] = IntMutator()
+            elif self._field_type[key] is float:
+                self._mutators[float] = FloatMutator()
+            elif self._field_type[key] is bool:
+                self._mutators[bool] = BooleanMutator()
+            elif self._field_type[key] is list:
+                self._mutators[list] = ListMutator()
+            elif self._field_type[key] is dict:
+                self._mutators[dict] = ObjectMutator()
+            else:
+                raise TypeError(f'*** {key} has an unknown type ***')
         return self._mutators[self._field_type[key]]
 
     def empty(self):
