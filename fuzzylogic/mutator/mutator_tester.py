@@ -12,12 +12,19 @@ from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
 from .complex_mutators import ListMutator, ObjectMutator
 
-mut = FloatMutator()
+mut = StringMutator()
 # print(mut.meme_mutation(5.0))
-final = 5.0
-for i in range(0,15):
-    final = mut.mutate(final)
-    print(final) 
+string = "hello"
+for i in range(100):
+    string = mut.mutate(string)
+    print(string)
+# for i in range(0,1000):
+#     if i % 3 == 0:
+#         string += "\0"
+#         continue
+#     string += "adam"
+
+# print(string)
 
 # infinity = float('Infinity')
 # print(type(infinity))
