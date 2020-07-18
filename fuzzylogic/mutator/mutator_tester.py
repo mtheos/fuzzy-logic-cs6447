@@ -1,5 +1,6 @@
 import sys
 import json
+import random
 sys.path.append('../../')
 __name__ = 'fuzzylogic.mutator.mutator_tester'
 __package__ = 'fuzzylogic.mutator'
@@ -15,9 +16,8 @@ from .complex_mutators import ListMutator, ObjectMutator
 mut = StringMutator()
 # print(mut.meme_mutation(5.0))
 string = "hello"
-for i in range(100):
-    string = mut.mutate(string)
-    print(string)
+cookies = ["caramel", "chocolate", "hazelnut"]
+print(random.choice(cookies))
 # for i in range(0,1000):
 #     if i % 3 == 0:
 #         string += "\0"
