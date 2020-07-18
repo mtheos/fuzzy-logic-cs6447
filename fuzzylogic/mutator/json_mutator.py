@@ -74,3 +74,6 @@ class JsonMutator:
         else:
             raise TypeError(f'*** {key} has an unknown type ***')
         return self._mutators[self._field_type[key]]
+
+    def empty(self):
+        return json.dumps(json.loads("{}")) # i think this is right? this gets plugged into a mutator

@@ -24,6 +24,7 @@ def fuzz(binary, input_file):
     runner = executor.Runner()
     orchestrator = MutatorQueueOrchestrator(mutator_instance)
     orchestrator.insert(PriorityShit(content, 0))
+    orchestrator.insert(PriorityShit(mutator_instance.empty(), 0))
     while len(orchestrator):
         _input = orchestrator.get()
         code = runner.run_process(binary, _input)  # big todo (mikey): if result code is not 0, save bad input to file.

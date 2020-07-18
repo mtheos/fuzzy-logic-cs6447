@@ -9,3 +9,6 @@ class CsvMutator:
             yield x
         # todo call string_mutator or other stuff if you want.
         # aran and mikey
+
+    def empty(self):
+        return ""
