@@ -79,7 +79,7 @@ class ObjectMutator:
         return float(random.uniform(0, 10000000))
 
     def _new_str_(self):
-        string = 'hello'
+        string = "hello"
         mut = self._get_mutator_(str)
         for i in range(0, 24):
             string = mut.mutate(string)

@@ -11,14 +11,31 @@ from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
+from .csv_row_mutator import CsvRowMutator
 from .complex_mutators import ListMutator, ObjectMutator
 
-mut = StringMutator()
+# mut = StringMutator()
 # print(mut.meme_mutation(5.0))
-string = "hello"
-for i in range(16):
-    string = mut.mutate(string)
-    print(string)
+# string = "hello"
+# for i in range(16):
+#     string = mut.mutate(string)
+#     print(string)
+
+mut = CsvRowMutator()
+csv = [[1,2,3],['lol','yay',4]]
+print(mut.mutate(csv))
+
+# print("---- Turn right")
+# print("---- Another comment")
+
+# print(1+1)
+# print("What's your name?")
+
+# name = input()
+
+# print("Hi "+ name)
+# print("how was your day")
+# day = input()
 
 # print(string)
 
