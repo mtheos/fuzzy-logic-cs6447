@@ -6,14 +6,14 @@ class IntMutator:
         self.seed = 0
 
     def mutate(self, i):
-        options = [self.add_mutation, self.minus_mutation]
+        options = [self._add_mutation_, self._minus_mutation_]
         mutator = random.choice(options)
         return mutator(i)
 
-    def add_mutation(self, i):  # % by max int if max int is provided (??)
+    def _add_mutation_(self, i):  # % by max int if max int is provided (??)
         i += random.randint(1, 1000000)
         return i 
 
-    def minus_mutation(self, i):
+    def _minus_mutation_(self, i):
         i -= random.randint(1, 1000000)
         return i
