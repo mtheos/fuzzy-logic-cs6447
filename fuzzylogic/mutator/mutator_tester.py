@@ -1,4 +1,5 @@
 import sys
+import json
 sys.path.append('../../')
 __name__ = 'fuzzylogic.mutator.mutator_tester'
 __package__ = 'fuzzylogic.mutator'
@@ -11,12 +12,23 @@ from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
 from .complex_mutators import ListMutator, ObjectMutator
 
-mut = IntMutator()
-final = 5
+mut = FloatMutator()
+# print(mut.meme_mutation(5.0))
+final = 5.0
 for i in range(0,15):
     final = mut.mutate(final)
     print(final) 
 
+# infinity = float('Infinity')
+# print(type(infinity))
+# # infinity -= 100000
+# print(infinity)
+
+# lol = {"wow":infinity}
+
+# lol2 = json.dumps(lol)
+
+# print(lol2)
 
 # string = "asdfghjkl"
 

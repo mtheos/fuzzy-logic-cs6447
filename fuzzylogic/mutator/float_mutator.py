@@ -6,9 +6,17 @@ class FloatMutator:
         self.seed = 0
 
     def mutate(self, f):
-        options = [self.add_mutation, self.minus_mutation]
+        options = [
+            self.add_mutation, 
+            self.minus_mutation,
+            self.meme_mutation,
+            ]
         mutator = random.choice(options)
         return mutator(f)
+
+    def meme_mutation(self, f):
+        options = [0, float('-inf'), float('inf'), float('NaN')]
+        return random.choice(options)
 
     def add_mutation(self, f):  # % by max int if max int is provided (??)
         f += random.uniform(0, 1000000)
