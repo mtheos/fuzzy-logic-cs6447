@@ -25,14 +25,17 @@ def fuzz(binary, input_file):
     orchestrator = MutatorQueueOrchestrator(mutator_instance)
     orchestrator.insert(PriorityShit(content, 0))
     orchestrator.insert(PriorityShit(mutator_instance.empty(), 0))
+    runs = 0
     while len(orchestrator):
+        runs += 1
         _input = orchestrator.get()
-        input()
+        # input()
         code = runner.run_process(binary, _input)
         # code = runner.run_process(binary, _input, fake=True)  # always return 0
         if code != 0:
             print('*' * 20)
             print('We did it Reddit! (Nice work fam ^_^)')
+            print(f'{runs} inputs tried')
             print(f'Exit code: {code} => {runner.parse_code(code)}')
             print('*' * 20)
             with open('bad.txt', 'w') as f:
