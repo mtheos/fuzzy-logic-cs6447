@@ -12,7 +12,6 @@ class CsvMutator:
         self._original = None  # Dictionary of json
         self._header = None  # List of keys in json
         self._field_type = None  # Dictionary of key:type
-        self._all = set()
 
     # return a generator (i.e. list)
     def mutate(self, csv_input):
@@ -23,18 +22,13 @@ class CsvMutator:
         self._analyse_(csv_input)
         for idx in range(len(self._original)):
             for jdx in range(len(self._original[idx])):
+                self._seed += 1
                 output = list([list(x) for x in self._original])
                 output = self._mutate_(output, idx, jdx)
-                self._seed += 1
                 stream = StringIO()
                 csv.writer(stream).writerows(output)
                 output = stream.getvalue()
                 output = output.replace('\r', '')
-                # if output[-1] == '\n':
-                #     output = output[:-1]
-                if output in self._all:
-                    print('*****\nOutput already seen\n', output)
-                    continue
                 print('New mutation =>')
                 print(output)
                 yield output
