@@ -1,3 +1,5 @@
+
+from collections import defaultdict
 # import pwn
 import os
 import re
