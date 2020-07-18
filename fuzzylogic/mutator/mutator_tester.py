@@ -30,18 +30,19 @@ from .complex_mutators import ListMutator, ObjectMutator
 # mut = BooleanMutator()
 # print(mut.mutate(result))
 
-# dictionary = {"Arushi" : 22, "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
+dictionary = {"Arushi" : 'lolz', "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
 
-# lol = ObjectMutator()
-# print(f"== {dictionary} == ")
-# mutation = dictionary
-# for i in range(0,15):
-#     mutation = lol.mutate(mutation)
-#     print(f"{i}: {mutation}")
+lol = ObjectMutator()
 
-lis = [1, 2, 3]
-l_mutator = ListMutator()
-mutation = lis
-for i in range(100):
-    mutation = l_mutator.mutate(mutation)
-    print(mutation)
+print(f"== {dictionary} == ")
+mutation = dictionary
+for i in range(0,15):
+    mutation = lol.mutate(mutation)
+    print(f"{i}: {mutation}")
+
+# lis = [1, 2, 3]
+# l_mutator = ListMutator()
+# mutation = lis
+# for i in range(100):
+#     mutation = l_mutator.mutate(mutation)
+#     print(mutation)
