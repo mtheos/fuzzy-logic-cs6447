@@ -33,7 +33,7 @@ class Runner:
         _input = re.sub('(!|\$|#|&|\'|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
         print('\n\n##########\nRunning with input')
         print(_input)
-        code = os.system(f'{binary} <<EOF\n{_input}\nEOF > /deb/null')
+        code = os.system(f'{binary} <<EOF\n{_input}EOF')
         print('##########\n\n')
         return code
 
