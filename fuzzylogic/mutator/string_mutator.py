@@ -6,7 +6,17 @@ class StringMutator:
         self.seed = 0
 
     def mutate(self, s):  # choose one mutating option
-        options = [self.del_rand_chars, self.insert_rand_chars, self.flip_rand_chars]
+        options = [
+            self.del_rand_chars, 
+            self.flip_rand_chars,
+            self.flip_rand_chars,
+            self.flip_rand_chars,
+            self.insert_rand_chars,
+            self.insert_rand_chars,
+            self.insert_rand_chars,
+            self.insert_rand_chars,
+            self.insert_rand_chars
+            ]
         mutator = random.choice(options)
         return mutator(s)
 
