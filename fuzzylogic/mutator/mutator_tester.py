@@ -12,10 +12,10 @@ from .boolean_mutator import BooleanMutator
 from .complex_mutators import ListMutator, ObjectMutator
 
 mut = IntMutator()
-print(mut.meme_mutation())
-
-# for i in range(0,15):
-#     final 
+final = 5
+for i in range(0,15):
+    final = mut.mutate(final)
+    print(final) 
 
 
 # string = "asdfghjkl"

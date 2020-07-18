@@ -6,11 +6,15 @@ class IntMutator:
         self.seed = 0
 
     def mutate(self, i):
-        options = [self.add_mutation, self.minus_mutation]
+        options = [
+            self.add_mutation, 
+            self.minus_mutation,
+            self.meme_mutation
+            ]
         mutator = random.choice(options)
         return mutator(i)
     
-    def meme_mutation(self):
+    def meme_mutation(self,i):
         options = [0, (2**31) - 1, -(2**31), (2**32) - 1]
         return random.choice(options)
 
