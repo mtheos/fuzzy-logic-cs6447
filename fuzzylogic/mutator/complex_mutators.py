@@ -39,6 +39,8 @@ class ObjectMutator:
 
     def mutate_type(self, obj):
         # first choose field
+        if len(list(obj.keys())) == 0:
+                return obj
         rand_key = random.choice(list(obj.keys()))
         # identify its type
         field_type = type(obj[rand_key])
@@ -131,6 +133,8 @@ class ListMutator:
     def mutate_type(self, lis):
         # first choose field
         # TODO: If list is [] this will error
+        if len(lis) == 0:
+                return lis
         rand_pos = random.randint(0, len(lis) - 1)
         # identify its type
         field_type = type(lis[rand_pos])

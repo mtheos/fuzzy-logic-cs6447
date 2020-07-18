@@ -1,8 +1,16 @@
+import sys
+sys.path.append('../../')
+__name__ = 'fuzzylogic.mutator.mutator_tester'
+__package__ = 'fuzzylogic.mutator'
+print(__name__)
+print(__package__)
+
 from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
 from .complex_mutators import ListMutator, ObjectMutator
+
 # string = "asdfghjkl"
 
 # mut = StringMutator()
