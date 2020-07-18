@@ -12,34 +12,35 @@ class ObjectMutator:
     def mutate(self, obj):
         self.seed += 1
         options = [
-            self.add_kv,
-            self.add_kv,
-            self.add_kv,
-            self.add_kv,
-            self.add_kv, 
-            self.remove_kv, 
-            self.mutate_type,
-            self.mutate_type,
-            self.mutate_type,
+            self._add_kv_,
+            self._add_kv_,
+            self._add_kv_,
+            self._add_kv_,
+            self._add_kv_, 
+            self._remove_kv_, 
+            self._mutate_type_,
+            self._mutate_type_,
+            self._mutate_type_,
             ]
         mutator = random.choice(options)
         return mutator(obj)
 
-    def add_kv(self, obj):
+    def _add_kv_(self, obj):
         options = [
-            self.new_int,
-            self.new_array,
-            self.new_bool,
-            self.new_none,
-            self.new_obj,
-            self.new_str,
-            self.new_float]  # fill options with add_xyz functions
+            self._new_int_,
+            self._new_array_,
+            self._new_bool_,
+            self._new_none_,
+            self._new_obj_,
+            self._new_str_,
+            self._new_float_
+            ]  # fill options with add_xyz functions
         mutator = random.choice(options)
         obj[f'new_key_{self.seed}'] = mutator()
         # print(f'-- Added: "new_key_{self.seed} {obj[f"new_key_{self.seed}"]}')
         return obj
 
-    def remove_kv(self, obj):
+    def _remove_kv_(self, obj):
         if len(list(obj.keys())) == 0:
             return obj
         rand_key = random.choice(list(obj.keys()))
@@ -47,7 +48,7 @@ class ObjectMutator:
         del obj[rand_key]
         return obj
 
-    def mutate_type(self, obj):
+    def _mutate_type_(self, obj):
         # first choose field
         if len(list(obj.keys())) == 0:
                 return obj
@@ -71,29 +72,29 @@ class ObjectMutator:
         # print(f'-- Mutated: {rand_key} {obj[rand_key]}')
         return obj
 
-    def new_int(self):
+    def _new_int_(self):
         return int(random.randint(0, 10000000))
 
-    def new_float(self):
+    def _new_float_(self):
         return float(random.uniform(0, 10000000))
 
-    def new_str(self):
+    def _new_str_(self):
         string = 'hello'
         mut = self._get_mutator_(str)
         for i in range(0, 24):
             string = mut.mutate(string)
         return str(string)
 
-    def new_obj(self):
+    def _new_obj_(self):
         return {}
 
-    def new_array(self):
+    def _new_array_(self):
         return []
 
-    def new_bool(self):
+    def _new_bool_(self):
         return bool(random.choice([True, False]))
 
-    def new_none(self):
+    def _new_none_(self):
         return None
     
     def _get_mutator_(self, type_key):
@@ -127,20 +128,21 @@ class ListMutator:
     def mutate(self, lis):
         self.seed += 1
         options = [
-            self.add_elem, 
-            self.add_elem, 
-            self.add_elem, 
-            self.add_elem, 
-            self.add_elem, 
-            self.remove_elem, 
-            self.mutate_type,
-            self.mutate_type,
-            self.mutate_type
+            self._add_elem_, 
+            self._add_elem_, 
+            self._add_elem_, 
+            self._add_elem_, 
+            self._add_elem_, 
+            self._remove_elem_, 
+            self._mutate_type_,
+            self._mutate_type_,
+            self._mutate_type_,
+            self._swap_elements_,
             ]
         mutator = random.choice(options)
         return mutator(lis)
 
-    def swap_elements(self, lis):
+    def _swap_elements_(self, lis):
         if len(lis) < 2:
             return lis
 
@@ -151,21 +153,21 @@ class ListMutator:
         lis[pos1], lis[pos2] = lis[pos2], lis[pos1]
         return lis
 
-    def add_elem(self, lis):
+    def _add_elem_(self, lis):
         options = [
-            self.new_int,
-            self.new_array,
-            self.new_bool,
-            self.new_none,
-            self.new_obj,
-            self.new_str,
-            self.new_float]  # fill options with add_xyz functions
+            self._new_int_,
+            self._new_array_,
+            self._new_bool_,
+            self._new_none_,
+            self._new_obj_,
+            self._new_str_,
+            self._new_float_]  # fill options with add_xyz functions
         mutator = random.choice(options)
         lis.append(mutator())
         # print(f'-- Added: {lis[::-1]}')
         return lis
 
-    def remove_elem(self, lis):
+    def _remove_elem_(self, lis):
         if len(lis) < 1:
             return lis
         rand_pos = random.randint(0, len(lis) - 1)
@@ -173,7 +175,7 @@ class ListMutator:
         del lis[rand_pos]
         return lis
 
-    def mutate_type(self, lis):
+    def _mutate_type_(self, lis):
         # first choose field
         if len(lis) == 0:
                 return lis
@@ -199,29 +201,29 @@ class ListMutator:
 
         return lis
 
-    def new_int(self):
+    def _new_int_(self):
         return int(random.randint(0, 10000000))
 
-    def new_float(self):
+    def _new_float_(self):
         return float(random.uniform(0, 10000000))
 
-    def new_str(self):
+    def _new_str_(self):
         string = 'hello'
         mut = self._get_mutator_(str)
         for i in range(0, 24):
             string = mut.mutate(string)
         return str(string)
 
-    def new_obj(self):
+    def _new_obj_(self):
         return {}
 
-    def new_array(self):
+    def _new_array_(self):
         return []
 
-    def new_bool(self):
+    def _new_bool_(self):
         return bool(random.choice([True, False]))
 
-    def new_none(self):
+    def _new_none_(self):
         return None
     
     def _get_mutator_(self, type_key):

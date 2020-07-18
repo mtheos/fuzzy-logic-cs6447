@@ -7,42 +7,46 @@ class StringMutator:
 
     def mutate(self, s):  # choose one mutating option
         options = [
-            self.del_rand_chars, 
-            self.flip_rand_chars,
-            self.flip_rand_chars,
-            self.flip_rand_chars,
-            self.insert_rand_chars,
-            self.insert_rand_chars,
-            self.insert_rand_chars,
-            self.insert_rand_chars,
-            self.insert_rand_chars,
-            self.meme_mutation,
+            self._del_rand_chars_, 
+            self._flip_rand_chars_,
+            self._flip_rand_chars_,
+            self._flip_rand_chars_,
+            self._insert_rand_chars_,
+            self._insert_rand_chars_,
+            self._insert_rand_chars_,
+            self._insert_rand_chars_,
+            self._insert_rand_chars_,
+            self._meme_mutation_
             ]
         mutator = random.choice(options)
         return mutator(s)
 
-    def meme_mutation(self, s):
+    def _meme_mutation_(self, s):
         options = [
             "",
             "adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam",
+<<<<<<< HEAD
             self.insert_rand_newline(s),
+=======
+            self._insert_rand_newline_(s)
+>>>>>>> a1cf4cedddea805fe6bc205211fe2bf98293bc0a
             ]
         return random.choice(options)
 
-    def del_rand_chars(self, s):
+    def _del_rand_chars_(self, s):
         if s == "":
             return s
         pos = random.randint(0, len(s) - 1)
         # print("--Deleting", repr(s[pos]), "at", pos)
         return s[:pos] + s[pos + 1:]
 
-    def insert_rand_chars(self, s):
+    def _insert_rand_chars_(self, s):
         pos = random.randint(0, len(s))
         random_character = chr(random.randrange(32, 127))
         # print("--Inserting", repr(random_character), "at", pos)
         return s[:pos] + random_character + s[pos:]
 
-    def flip_rand_chars(self, s):
+    def _flip_rand_chars_(self, s):
         if s == "":
             return s
         pos = random.randint(0, len(s) - 1)
@@ -52,7 +56,7 @@ class StringMutator:
         # print("--Flipping", bit, "in", repr(c) + ", giving", repr(new_c))
         return s[:pos] + new_c + s[pos + 1:]
 
-    def insert_rand_newline(self, s):
+    def _insert_rand_newline_(self, s):
         if s == "":
             return "\n"
         pos = random.randint(0, len(s) - 1)
