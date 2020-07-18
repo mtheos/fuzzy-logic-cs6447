@@ -3,23 +3,33 @@ from io import StringIO
 from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
+from .csv_row_mutator import CsvRowMutator
 
 
 class CsvMutator:
     def __init__(self):
         self._seed = 0
         self._mutators = {}
+        self._row_mutator = CsvRowMutator()
         self._original = None  # Dictionary of json
         self._header = None  # List of keys in json
         self._field_type = None  # Dictionary of key:type
 
     # return a generator (i.e. list)
     def mutate(self, csv_input):
-        print('\n\n**********')
-        print('Mutator called with input')
-        print(csv_input)
-        print('**********\n\n')
+        # print('\n\n**********')
+        # print('Mutator called with input')
+        # print(csv_input)
+        # print('**********\n\n')
         self._analyse_(csv_input)
+        # output = list([list(x) for x in self._original])
+        # for i in range(20):
+        #     self._row_mutator.mutate(output)
+        #     stream = StringIO()
+        #     csv.writer(stream).writerows(output)
+        #     output2 = stream.getvalue()
+        #     output2 = output2.replace('\r', '')
+        #     yield output2
         for idx in range(len(self._original)):
             for jdx in range(len(self._original[idx])):
                 self._seed += 1
@@ -29,9 +39,14 @@ class CsvMutator:
                 csv.writer(stream).writerows(output)
                 output = stream.getvalue()
                 output = output.replace('\r', '')
-                print('New mutation =>')
-                print(output)
                 yield output
+        output = list([list(x) for x in self._original])
+        self._row_mutator.mutate(output)
+        stream = StringIO()
+        csv.writer(stream).writerows(output)
+        output = stream.getvalue()
+        output = output.replace('\r', '')
+        yield output
 
     def _mutate_(self, output, idx, jdx):
         type_mutator = self._get_mutator_((idx, jdx))
