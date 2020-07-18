@@ -32,7 +32,7 @@ class JsonMutator:
                 output = dict(self._original)
                 # print('mutating:', ', '.join(keys_to_mutate))
                 for key in keys_to_mutate:
-                    self._mutate_(output, key)
+                    output = self._mutate_(output, key)
                 self._seed += 1
                 output = json.dumps(output)
                 if output in self._all:
@@ -44,6 +44,7 @@ class JsonMutator:
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)
         output[key] = type_mutator.mutate(output[key])
+        return output
 
     def _analyse_(self, _input):
         self._original = json.loads(_input)
