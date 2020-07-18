@@ -4,16 +4,24 @@ from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
 
-
 class ObjectMutator:
     def __init__(self):
-        x = {'y': ['a', 1]}
-        self.mutate_type(x)
+        self._mutators = {}
         self.seed = 0
 
     def mutate(self, obj):
         self.seed += 1
-        options = [self.add_kv, self.remove_kv, self.mutate_type]
+        options = [
+            self.add_kv,
+            self.add_kv,
+            self.add_kv,
+            self.add_kv,
+            self.add_kv, 
+            self.remove_kv, 
+            self.mutate_type,
+            self.mutate_type,
+            self.mutate_type,
+            ]
         mutator = random.choice(options)
         return mutator(obj)
 
@@ -47,15 +55,15 @@ class ObjectMutator:
         # identify its type
         field_type = type(obj[rand_key])
         if field_type is int:
-            obj[rand_key] = IntMutator().mutate(obj[rand_key])
+            obj[rand_key] = self._get_mutator_(int).mutate(obj[rand_key])
         elif field_type is str:
-            obj[rand_key] = StringMutator().mutate(obj[rand_key])
+            obj[rand_key] = self._get_mutator_(str).mutate(obj[rand_key])
         elif field_type is float:
-            obj[rand_key] = FloatMutator().mutate(obj[rand_key])
+            obj[rand_key] = self._get_mutator_(float).mutate(obj[rand_key])
         elif field_type is list:
-            obj[rand_key] = ListMutator().mutate(obj[rand_key])  # TODO cause we haven't done yey
+            obj[rand_key] = self._get_mutator_(list).mutate(obj[rand_key])  # TODO cause we haven't done yey
         elif field_type is bool:
-            obj[rand_key] = BooleanMutator().mutate(obj[rand_key])
+            obj[rand_key] = self._get_mutator_(bool).mutate(obj[rand_key])
         elif field_type is dict:
             obj[rand_key] = self.mutate(obj[rand_key])
         elif field_type is None:
@@ -71,7 +79,7 @@ class ObjectMutator:
 
     def new_str(self):
         string = 'hello'
-        mut = StringMutator()
+        mut = self._get_mutator_(str)
         for i in range(0, 24):
             string = mut.mutate(string)
         return str(string)
@@ -87,6 +95,28 @@ class ObjectMutator:
 
     def new_none(self):
         return None
+    
+    def _get_mutator_(self, type_key):
+        if type_key in self._mutators.keys():
+            return self._mutators[type_key]
+
+        if type_key is None:
+            raise TypeError('What even is a "none" mutator?')
+        elif type_key is str:
+            self._mutators[str] = StringMutator()
+        elif type_key is int:
+            self._mutators[int] = IntMutator()
+        elif type_key is float:
+            self._mutators[float] = FloatMutator()
+        elif type_key is bool:
+            self._mutators[bool] = BooleanMutator()
+        elif type_key is list:
+            self._mutators[list] = ListMutator()
+        elif type_key is dict:
+            self._mutators[dict] = ObjectMutator()
+        else:
+            raise TypeError(f'*** {type_key} has an unknown type ***')
+        return self._mutators[type_key]
 
 
 class ListMutator:
