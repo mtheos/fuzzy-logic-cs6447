@@ -33,7 +33,7 @@ class JsonMutator:
 
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)
-        output[key] = type_mutator().mutate(output[key])
+        output[key] = type_mutator.mutate(output[key])
 
     def _analyse_(self, _input):
         self._original = json.loads(_input)
