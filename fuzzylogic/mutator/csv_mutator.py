@@ -50,6 +50,11 @@ class CsvMutator:
         output[row] = type_mutator.mutate(output[row])
         return output
 
+    def _mutate2_(self, output, cell):
+        type_mutator = self._get_mutator_(cell)
+        output[cell] = type_mutator.mutate(output[cell])
+        return output
+
     def _analyse_(self, _input):
         reader = csv.reader(_input.splitlines())
         self._original = [r for r in reader]
