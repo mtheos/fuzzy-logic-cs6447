@@ -16,13 +16,9 @@ from .complex_mutators import ListMutator, ObjectMutator
 mut = StringMutator()
 # print(mut.meme_mutation(5.0))
 string = "hello"
-cookies = ["caramel", "chocolate", "hazelnut"]
-print(random.choice(cookies))
-# for i in range(0,1000):
-#     if i % 3 == 0:
-#         string += "\0"
-#         continue
-#     string += "adam"
+for i in range(16):
+    string = mut.mutate(string)
+    print(string)
 
 # print(string)
 

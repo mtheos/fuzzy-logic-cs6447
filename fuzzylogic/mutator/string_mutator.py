@@ -16,7 +16,10 @@ class StringMutator:
             self._insert_rand_chars_,
             self._insert_rand_chars_,
             self._insert_rand_chars_,
-            self._meme_mutation_
+            self._meme_mutation_,
+            self._insert_fmt_str_,
+            self._insert_fmt_str_,
+            self._insert_fmt_str_,
             ]
         mutator = random.choice(options)
         return mutator(s)
@@ -57,4 +60,9 @@ class StringMutator:
             return "\n"
         pos = random.randint(0, len(s) - 1)
         return s[:pos] + '\n' + s[pos+1:]
-        
+    
+    def _insert_fmt_str_(self, s):
+        if s == "":
+            return "%s"
+        pos = random.randint(0, len(s) - 1)
+        return s[:pos] + '%s' + s[pos+1:]
