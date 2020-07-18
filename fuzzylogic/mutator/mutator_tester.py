@@ -11,6 +11,13 @@ from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
 from .complex_mutators import ListMutator, ObjectMutator
 
+mut = IntMutator()
+print(mut.meme_mutation())
+
+# for i in range(0,15):
+#     final 
+
+
 # string = "asdfghjkl"
 
 # mut = StringMutator()
@@ -40,9 +47,9 @@ from .complex_mutators import ListMutator, ObjectMutator
 #     mutation = lol.mutate(mutation)
 #     print(f"{i}: {mutation}")
 
-lis = [1, 2, 3]
-l_mutator = ListMutator()
-mutation = lis
-for i in range(10):
-    mutation = l_mutator.mutate(mutation)
-    print(mutation)
+# lis = [1, 2, 3]
+# l_mutator = ListMutator()
+# mutation = lis
+# for i in range(10):
+#     mutation = l_mutator.mutate(mutation)
+#     print(mutation)

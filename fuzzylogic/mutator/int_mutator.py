@@ -9,6 +9,10 @@ class IntMutator:
         options = [self.add_mutation, self.minus_mutation]
         mutator = random.choice(options)
         return mutator(i)
+    
+    def meme_mutation(self):
+        options = [0, (2**31) - 1, -(2**31), (2**32) - 1]
+        return random.choice(options)
 
     def add_mutation(self, i):  # % by max int if max int is provided (??)
         i += random.randint(1, 1000000)
