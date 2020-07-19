@@ -30,11 +30,8 @@ class Runner:
         return 0
 
     def _run_process_cmd_(self, binary, _input):
-        _input = re.sub('(!|\$|#|&|\'|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
-        # print('\n\n##########\nRunning with input')
-        # print(_input)
-        code = os.system(f'{binary} <<EOF\n{_input}EOF')
-        # print('##########\n\n')
+        _input = re.sub('(!|\$|#|&|\'|"|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
+        code = os.system(f'{binary} >/dev/null <<EOF\n{_input}EOF')
         return code
 
     # def _run_process_pwn_tools_(self, binary, _input):
