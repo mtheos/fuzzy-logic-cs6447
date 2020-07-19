@@ -7,8 +7,10 @@ class CsvRowMutator:
     def __init__(self):
         self.seed = 0
 
-    def mutate(self, csv):  # choose one mutating option
-        return self._add_row_(csv)
+    def mutate(self, csv, num = 1):  # choose one mutating option
+        for i in range(num):
+            self._add_row_(csv)
+        return csv
     
     def _add_row_(self, csv):
         if len(csv) == 0:
