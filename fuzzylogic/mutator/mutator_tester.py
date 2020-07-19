@@ -16,14 +16,14 @@ from .complex_mutators import ListMutator, ObjectMutator
 
 # mut = StringMutator()
 # print(mut.meme_mutation(5.0))
-string = "hello"
+# string = "hello"
 # for i in range(16):
 #     string = mut.mutate(string)
 #     print(string)
 
-mut = StringMutator()
-csv = [[1,2,3],['lol','yay',4]]
-print(mut._meme_mutation_(string))
+# mut = StringMutator()
+# csv = [[1,2,3],['lol','yay',4]]
+# print(mut._meme_mutation_(string))
 
 # print("---- Turn right")
 # print("---- Another comment")
@@ -69,15 +69,15 @@ print(mut._meme_mutation_(string))
 # mut = BooleanMutator()
 # print(mut.mutate(result))
 
-# dictionary = {"Arushi" : 'lolz', "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
+dictionary = {"Arushi" : 'lolz', "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
 
-# lol = ObjectMutator()
+lol = ObjectMutator()
 
-# print(f"== {dictionary} == ")
-# mutation = dictionary
-# for i in range(0,15):
-#     mutation = lol.mutate(mutation)
-#     print(f"{i}: {mutation}")
+print(f"== {dictionary} == ")
+mutation = dictionary
+for i in range(1000):
+    mutation = lol.mutate(dictionary)
+    print(mutation)
 
 # lis = [1, 2, 3]
 # l_mutator = ListMutator()

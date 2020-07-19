@@ -8,21 +8,25 @@ class ObjectMutator:
     def __init__(self):
         self._mutators = {}
         self.seed = 0
+        self.depth = 0
 
     def mutate(self, obj):
         self.seed += 1
-        options = [
-            self._add_kv_,
-            self._add_kv_,
-            self._add_kv_,
-            self._add_kv_,
-            self._add_kv_, 
-            self._remove_kv_, 
-            self._mutate_type_,
-            self._mutate_type_,
-            self._mutate_type_,
-            ]
-        mutator = random.choice(options)
+        self.depth += 1
+        if self.depth < 1000:
+            options = [
+                self._add_kv_,
+                self._add_kv_,
+                self._add_kv_,
+                self._add_kv_,
+                self._add_kv_, 
+                self._remove_kv_, 
+                self._mutate_type_,
+                self._mutate_type_,
+                self._mutate_type_,
+                ]
+            mutator = random.choice(options)
+        self.depth -= 1
         return mutator(obj)
 
     def _add_kv_(self, obj):
@@ -86,7 +90,14 @@ class ObjectMutator:
         return str(string)
 
     def _new_obj_(self):
-        return {}
+        num = random.randint(5,25)
+        new = {}
+        for i in range(num):
+            self.depth += 1
+            if self.depth < 20:
+                new = self.mutate(new)
+            self.depth -= 1
+        return new
 
     def _new_array_(self):
         return []
