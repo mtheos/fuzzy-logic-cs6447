@@ -4,7 +4,6 @@ import os
 try:
     from fuzzylogic import fuzzer
 except ModuleNotFoundError:
-    # sys.path needs a small hacky-hack if run as ./main.py instead of py -m fuzzylogic
     sys.path.append('.')
     from fuzzylogic import fuzzer
 

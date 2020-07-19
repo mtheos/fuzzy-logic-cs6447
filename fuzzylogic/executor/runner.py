@@ -1,8 +1,6 @@
-
-from collections import defaultdict
-# import pwn
 import os
-import re
+# import re
+# import pwn
 # from subprocess import Popen, PIPE
 from collections import defaultdict
 
@@ -30,8 +28,9 @@ class Runner:
         return 0
 
     def _run_process_cmd_(self, binary, _input):
-        _input = re.sub('(!|\$|#|&|\'|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
-        code = os.system(f'{binary} >/dev/null <<EOF\n{_input}EOF')
+        # _input = re.sub('(!|\$|#|&|\'|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
+        # Put EOF in quotes and you don't need to escape anything
+        code = os.system(f'{binary} >/dev/null <<\'EOF\'\n{_input}EOF')
         return code
 
     # def _run_process_pwn_tools_(self, binary, _input):

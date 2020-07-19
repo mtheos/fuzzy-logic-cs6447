@@ -1,9 +1,9 @@
 # fuzzy-logic-cs6447
 
-Can be run from the cloned folder or the parent folder
-From the cloned folder:
-   Run as `python3 -m fuzzy-logic-cs6447 <binary> <input>`
-From the parent folder
-   Run as `python3 -m fuzzylogic <binary> <input>`
+Can be run from as a package or using the provided script
 
-To compile our tests run ```make```` in ```test_binaries/```
+Run as `./fuzzer <binary> <input>`
+
+Run as a package with `python3 -m fuzzylogic <binary> <input>`
+
+To compile our tests run `make` in `test_binaries/`

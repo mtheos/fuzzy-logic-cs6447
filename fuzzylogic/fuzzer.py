@@ -1,7 +1,5 @@
 from fuzzylogic import mutator, executor
 from queue import PriorityQueue
-import json
-import collections
 
 
 def fuzz(binary, input_file):

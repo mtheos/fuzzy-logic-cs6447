@@ -1,5 +1,4 @@
 import json
-# from itertools import combinations
 from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
@@ -21,10 +20,6 @@ class JsonMutator:
         # print(json_input)
         # print('**********\n\n')
         self._analyse_(json_input)
-        # combinations will return objects like this for i = 1 to n
-        # [(key1,), (key2,), (key3,)]
-        # [(key1, key2), (key1, key3), (key2, key3)]
-        # [(key1, key2, key3)]
         for key in self._keys:
             self._seed += 1
             output = dict(self._original)
@@ -32,31 +27,6 @@ class JsonMutator:
             output = json.dumps(output)
             # print('New mutation =>', output)
             yield output
-
-    # return a generator (i.e. list)
-    # def mutate(self, json_input):
-    #     print('\n\n**********')
-    #     print('Mutator called with input')
-    #     print(json_input)
-    #     print('**********\n\n')
-    #     self._analyse_(json_input)
-    #     # combinations will return objects like this for i = 1 to n
-    #     # [(key1,), (key2,), (key3,)]
-    #     # [(key1, key2), (key1, key3), (key2, key3)]
-    #     # [(key1, key2, key3)]
-    #     for i in range(1, len(self._keys) + 1):
-    #         for keys_to_mutate in combinations(self._keys, i):
-    #             output = dict(self._original)
-    #             # print('mutating:', ', '.join(keys_to_mutate))
-    #             for key in keys_to_mutate:
-    #                 output = self._mutate_(output, key)
-    #             self._seed += 1
-    #             output = json.dumps(output)
-    #             if output in self._all:
-    #                 print('*****\nOutput already seen\n', output)
-    #                 continue
-    #             print('New mutation =>', output)
-    #             yield output
 
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)
@@ -72,7 +42,6 @@ class JsonMutator:
         self._field_type = {}
         for k, v in self._original.items():
             self._field_type[k] = self._get_type_(v)
-            # print(f'Key {k} => type {self._field_type[k]}')
 
     @staticmethod
     def _get_type_(v):
