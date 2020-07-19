@@ -12,7 +12,8 @@ class CsvMutator:
         self._mutators = {}
         self._row_mutator = CsvRowMutator()
         self._original = None  # Dictionary of json
-        self._header = None  # List of keys in json
+        self._has_headers = False
+        self._headers = None  # List of keys in json
         self._field_type = None  # Dictionary of key:type
 
     # return a generator (i.e. list)
@@ -30,7 +31,8 @@ class CsvMutator:
         #     output2 = stream.getvalue()
         #     output2 = output2.replace('\r', '')
         #     yield output2
-        for idx in range(len(self._original)):
+        start = 1 if self._has_headers else 0
+        for idx in range(start, len(self._original)):
             for jdx in range(len(self._original[idx])):
                 self._seed += 1
                 output = list([list(x) for x in self._original])
@@ -56,7 +58,11 @@ class CsvMutator:
     def _analyse_(self, _input):
         reader = csv.reader(_input.splitlines())
         self._original = [r for r in reader]
-        self._header = None  # do this later (probably)
+        try:
+            self._has_headers = csv.Sniffer().has_header(_input)
+        except csv.Error:
+            self._has_headers = False
+        self._headers = self._original[0] if self._has_headers else None
         self._build_types_()
 
     def _build_types_(self):

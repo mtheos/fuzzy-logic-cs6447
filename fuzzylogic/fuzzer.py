@@ -9,16 +9,19 @@ def fuzz(binary, input_file):
     print(f'input: {input_file}')
     with open(input_file, 'r') as f:
         content = f.read()
-    if mutator.isJson(content):
+    content_type = mutator.detect(content)
+    if content_type == mutator.RET_FAIL:
+        raise Exception('Failed to detect input type')
+    if content_type == mutator.RET_JSON:
         mutator_instance = mutator.JsonMutator()
-    elif mutator.isXml(content):
-        mutator_instance = None
-    elif mutator.isCsv(content):
+    elif content_type == mutator.RET_CSV:
         mutator_instance = mutator.CsvMutator()
-    elif mutator.isMultilineText(content):
-        mutator_instance = mutator.CsvMutator()  # NOTE: this is TEMPORARY for ez debugging
+    elif content_type == mutator.RET_XML:
+        mutator_instance = None
+    elif content_type == mutator.RET_MULTILINE_TEXT:
+        mutator_instance = None
     else:
-        mutator_instance = mutator.CsvMutator()  # NOTE: this is TEMPORARY for ez debugging
+        mutator_instance = None
 
     print(f'mutator: {mutator_instance}')
     runner = executor.Runner()
