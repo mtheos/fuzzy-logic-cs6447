@@ -16,14 +16,14 @@ from .complex_mutators import ListMutator, ObjectMutator
 
 # mut = StringMutator()
 # print(mut.meme_mutation(5.0))
-# string = "hello"
+string = "hello"
 # for i in range(16):
 #     string = mut.mutate(string)
 #     print(string)
 
-mut = CsvRowMutator()
+mut = StringMutator()
 csv = [[1,2,3],['lol','yay',4]]
-print(mut.mutate(csv,0))
+print(mut._meme_mutation_(string))
 
 # print("---- Turn right")
 # print("---- Another comment")

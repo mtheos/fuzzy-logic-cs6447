@@ -27,7 +27,7 @@ class StringMutator:
     def _meme_mutation_(self, s):
         options = [
             '',
-            'adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam',
+            self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator(),
             # self._insert_rand_newline_(s)
             ]
         return random.choice(options)
@@ -69,3 +69,9 @@ class StringMutator:
             return "%s"
         pos = random.randint(0, len(s) - 1)
         return s[:pos] + '%s' + s[pos+1:]
+    
+    def _adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator(self):
+        num = random.randint(1,20)
+        return ("adam"*12) * num
+
+
