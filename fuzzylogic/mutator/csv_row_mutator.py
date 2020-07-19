@@ -3,6 +3,7 @@ from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
 
+
 class CsvRowMutator:
     def __init__(self):
         self.seed = 0
@@ -14,7 +15,7 @@ class CsvRowMutator:
     
     def _add_row_(self, csv):
         if len(csv) == 0:
-            raise ValueError("why is a CSV empty???") # empty csv case??
+            return csv
 
         options = [
             self._new_int_,

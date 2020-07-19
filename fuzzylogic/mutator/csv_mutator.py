@@ -1,58 +1,56 @@
 import csv
-from itertools import combinations
+from io import StringIO
 from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
+from .csv_row_mutator import CsvRowMutator
 
 
 class CsvMutator:
     def __init__(self):
         self._seed = 0
         self._mutators = {}
+        self._row_mutator = CsvRowMutator()
         self._original = None  # Dictionary of json
         self._header = None  # List of keys in json
         self._field_type = None  # Dictionary of key:type
-        self._all = set()
 
     # return a generator (i.e. list)
     def mutate(self, csv_input):
-        print('\n\n**********')
-        print('Mutator called with input')
-        print(csv_input)
-        print('**********\n\n')
+        # print('\n\n**********')
+        # print('Mutator called with input')
+        # print(csv_input)
+        # print('**********\n\n')
         self._analyse_(csv_input)
-        for i in range(1, len(self._original) + 1):
-            for rows_to_mutate in combinations(self._original, i):
-                output = list([list(x) for x in self._original])
-                for row in rows_to_mutate:
-                    output = self._mutate_(output, row)
+        # output = list([list(x) for x in self._original])
+        # for i in range(20):
+        #     self._row_mutator.mutate(output)
+        #     stream = StringIO()
+        #     csv.writer(stream).writerows(output)
+        #     output2 = stream.getvalue()
+        #     output2 = output2.replace('\r', '')
+        #     yield output2
+        for idx in range(len(self._original)):
+            for jdx in range(len(self._original[idx])):
                 self._seed += 1
-                if output in self._all:
-                    print('*****\nOutput already seen\n', output)
-                    continue
-                print('New mutation =>', output)
-                yield output
-
-    def _mutate_(self, output, row):
-        for i in range(1, len(row) + 1):
-            for rows_to_mutate in combinations(self._original, i):
                 output = list([list(x) for x in self._original])
-                for row in rows_to_mutate:
-                    output = self._mutate_(output, row)
-                self._seed += 1
-                if output in self._all:
-                    print('*****\nOutput already seen\n', output)
-                    continue
-                print('New mutation =>', output)
+                output = self._mutate_(output, idx, jdx)
+                stream = StringIO()
+                csv.writer(stream).writerows(output)
+                output = stream.getvalue()
+                output = output.replace('\r', '')
                 yield output
+        output = list([list(x) for x in self._original])
+        self._row_mutator.mutate(output)
+        stream = StringIO()
+        csv.writer(stream).writerows(output)
+        output = stream.getvalue()
+        output = output.replace('\r', '')
+        yield output
 
-        type_mutator = self._get_mutator_(row)
-        output[row] = type_mutator.mutate(output[row])
-        return output
-
-    def _mutate2_(self, output, cell):
-        type_mutator = self._get_mutator_(cell)
-        output[cell] = type_mutator.mutate(output[cell])
+    def _mutate_(self, output, idx, jdx):
+        type_mutator = self._get_mutator_((idx, jdx))
+        output[idx][jdx] = type_mutator.mutate(output[idx][jdx])
         return output
 
     def _analyse_(self, _input):
@@ -62,12 +60,12 @@ class CsvMutator:
         self._build_types_()
 
     def _build_types_(self):
-        self._field_type = []
-        for idx, row in enumerate(self._original):
-            self._field_type.append([])
-            for jdx, cell in enumerate(row):
-                self._field_type[idx].append(self._get_type_(cell))
-                print(f'Key ({idx}, {jdx}) => type {self._field_type[idx][jdx]}')
+        self._field_type = {}
+        for idx in range(len(self._original)):
+            for jdx in range(len(self._original[idx])):
+                self._field_type[(idx, jdx)] = self._get_type_(self._original[idx][jdx])
+                self._original[idx][jdx] = self._field_type[(idx, jdx)](self._original[idx][jdx])
+                # print(f'Key ({idx}, {jdx}) => type {self._field_type[(idx, jdx)]}')
 
     def _get_type_(self, v):
         if self._is_float_(v):
