@@ -23,7 +23,7 @@ from .complex_mutators import ListMutator, ObjectMutator
 
 mut = CsvRowMutator()
 csv = [[1,2,3],['lol','yay',4]]
-print(mut.mutate(csv))
+print(mut.mutate(csv,0))
 
 # print("---- Turn right")
 # print("---- Another comment")
