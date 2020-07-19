@@ -57,7 +57,7 @@ def isMultilineText(s):
 
 def detect(s):
     if isJson(s) != RET_FAIL:
-       return RET_JSON 
+        return RET_JSON
     elif isXml(s) != RET_FAIL:
         return RET_XML
     elif isCsv(s) != RET_FAIL:

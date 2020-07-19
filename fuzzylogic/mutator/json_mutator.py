@@ -16,10 +16,10 @@ class JsonMutator:
         self._field_type = None  # Dictionary of key:type
 
     def mutate(self, json_input):
-        print('\n\n**********')
-        print('Mutator called with input')
-        print(json_input)
-        print('**********\n\n')
+        # print('\n\n**********')
+        # print('Mutator called with input')
+        # print(json_input)
+        # print('**********\n\n')
         self._analyse_(json_input)
         # combinations will return objects like this for i = 1 to n
         # [(key1,), (key2,), (key3,)]
@@ -30,7 +30,7 @@ class JsonMutator:
             output = dict(self._original)
             output = self._mutate_(output, key)
             output = json.dumps(output)
-            print('New mutation =>', output)
+            # print('New mutation =>', output)
             yield output
 
     # return a generator (i.e. list)
