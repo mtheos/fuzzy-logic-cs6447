@@ -21,7 +21,6 @@ def fuzz(binary, input_file):
     else:
         mutator_instance = None
 
-    print(f'mutator: {mutator_instance}')
     runner = executor.Runner()
     orchestrator = MutatorQueueOrchestrator(mutator_instance)
     orchestrator.insert(PriorityShit(content, 0))
