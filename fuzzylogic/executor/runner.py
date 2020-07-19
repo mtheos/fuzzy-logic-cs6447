@@ -30,7 +30,7 @@ class Runner:
         return 0
 
     def _run_process_cmd_(self, binary, _input):
-        _input = re.sub('(!|\$|#|&|\'|"|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
+        _input = re.sub('(!|\$|#|&|\'|\(|\)|\||<|>|`|\\|\|;)', r"\\\1", _input)
         code = os.system(f'{binary} >/dev/null <<EOF\n{_input}EOF')
         return code
 
