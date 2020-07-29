@@ -75,7 +75,7 @@ lol = ObjectMutator()
 
 print(f"== {dictionary} == ")
 mutation = dictionary
-for i in range(1000):
+for i in range(2):
     mutation = lol.mutate(dictionary)
     print(mutation)
 
