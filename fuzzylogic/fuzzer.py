@@ -16,7 +16,7 @@ def fuzz(binary, input_file):
     elif content_type == mutator.RET_XML:
         mutator_instance = None
     elif content_type == mutator.RET_MULTILINE_TEXT:
-        mutator_instance = None
+        mutator_instance = mutator.CsvMutator()
     else:
         mutator_instance = None
 
@@ -45,7 +45,6 @@ def fuzz(binary, input_file):
             if j not in prev_jumps:
                 unique_discovery = 15000
                 break
-
         return  -1/(d+15)*(len(priority_info.jumps)+ unique_discovery)
 
     while len(orchestrator):

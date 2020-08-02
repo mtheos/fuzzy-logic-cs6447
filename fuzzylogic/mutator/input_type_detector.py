@@ -65,7 +65,7 @@ def detect(s):
     elif isMultilineText(s) != RET_FAIL:
         return RET_MULTILINE_TEXT
     else:
-        return RET_SINGLELINE_TEXT
+        return RET_MULTILINE_TEXT
 
 
 if __name__ == '__main__':
