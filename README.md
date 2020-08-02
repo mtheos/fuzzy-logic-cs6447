@@ -1,5 +1,10 @@
 # fuzzy-logic-cs6447
 
+##Prerequisites:
+Requires qemu. 
+```apt-get install qemu```
+
+##Running it:
 Can be run from as a package or using the provided script
 
 Run as `./fuzzer <binary> <input>`

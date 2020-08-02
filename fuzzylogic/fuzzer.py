@@ -1,7 +1,6 @@
 from fuzzylogic import mutator, executor
 from queue import PriorityQueue
 
-
 def fuzz(binary, input_file):
     print(f'binary: {binary}')
     print(f'input: {input_file}')
@@ -23,15 +22,47 @@ def fuzz(binary, input_file):
 
     runner = executor.Runner()
     orchestrator = MutatorQueueOrchestrator(mutator_instance)
-    orchestrator.insert(PriorityShit(content, 0))
-    orchestrator.insert(PriorityShit(mutator_instance.empty(), 0))
+    distance = dict()
+    prev = dict()
+    orchestrator._q.put(QueueItem(content, -1e9))
+    distance[content] = 0
+    orchestrator._q.put(QueueItem(mutator_instance.empty(), -1e9))
+    distance[mutator_instance.empty()] = 0
     runs = 0
+
+    #return negative weighting. (lower is higher priority)
+    def priority_function(the_input, priority_info):
+        d = distance[the_input]
+        
+
+        # calculate the unique discovery of a block bonus
+        if _input not in prev:
+            prev_jumps = {}
+        else:
+            prev_jumps = set(orchestrator.seen[prev[_input]].jumps)
+        unique_discovery = 0
+        for j in priority_info.jumps:
+            if j not in prev_jumps:
+                unique_discovery = 15000
+                break
+
+        return  -1/(d+15)*(len(priority_info.jumps)+ unique_discovery)
+
     while len(orchestrator):
         runs += 1
+        # if runs % 100 == 0:
+        #     print("runs = ", runs)
         _input = orchestrator.get()
-        # input()
-        code = runner.run_process(binary, _input)
-        # code = runner.run_process(binary, _input, fake=True)  # always return 0
+        priority_info = runner.run_process(binary, _input)
+        code = priority_info.return_code
+        orchestrator.seen[_input] = priority_info
+
+        for mutation in orchestrator._mutator.mutate(_input):
+            if mutation not in orchestrator.seen:
+                prev[mutation] = _input
+                distance[mutation] = distance[_input] + 1
+                orchestrator._q.put(QueueItem(mutation, priority_function(mutation, priority_info)))
+
         if code != 0:
             print('*' * 20)
             print('We did it Reddit! (Nice work fam ^_^)')
@@ -48,18 +79,11 @@ def fuzz(binary, input_file):
 class MutatorQueueOrchestrator:
     def __init__(self, mutator_instance):
         self._mutator = mutator_instance
-        self._q = PriorityQueue() 
+        self._q = PriorityQueue()
         self.seen = dict()
-
-    def insert(self, priority_shit):
-        self._q.put(priority_shit)
 
     def get(self):
         to_mutate = self._q.get()
-        for mutation in self._mutator.mutate(to_mutate.data):
-            if mutation not in self.seen:
-                self._q.put(PriorityShit(mutation, to_mutate.priority + 1))
-                self.seen[mutation] = 1
         return to_mutate.data
 
     def __len__(self):
@@ -74,26 +98,21 @@ class MutatorQueueOrchestrator:
 
 # todo(Andrew): rename this to queue_item, and make another class for the
 # actual priority
-class PriorityShit:
+class QueueItem:
     def __init__(self, data, priority):
         self.data = data
         self.priority = priority
 
-    # from what I can see, PriorityQueue only uses < comparisons
     def __lt__(self, other):
         return self.priority < other.priority
-
-    def __repr__(self):
-        return f'({self.priority}) "{self.data}"'
     
     def __gt__(self, data2):
-        return self.priority_function(self.priority) > self.priority_function(data2.priority)
+        return self.priority > data2.priority
 
     def __eq__(self, x):
-        return self.__repr__() == x.__repr__()  # equality by value
+        return self.priority == x.priority  # equality by value
 
     def __hash__(self):
         return self.__repr__().__hash__()
 
-    def priority_function(self, priority):
-        return priority
+    # from what I can see, PriorityQueue only uses < comparisons
