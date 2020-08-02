@@ -7,12 +7,38 @@ __package__ = 'fuzzylogic.mutator'
 print(__name__)
 print(__package__)
 
-from .int_mutator import IntMutator
-from .float_mutator import FloatMutator
-from .string_mutator import StringMutator
-from .boolean_mutator import BooleanMutator
-from .csv_row_mutator import CsvRowMutator
-from .complex_mutators import ListMutator, ObjectMutator
+from .xml_mutator import XmlMutator
+# from .int_mutator import IntMutator
+# from .float_mutator import FloatMutator
+# from .string_mutator import StringMutator
+# from .boolean_mutator import BooleanMutator
+# from .csv_row_mutator import CsvRowMutator
+# from .complex_mutators import ListMutator, ObjectMutator
+
+mut = XmlMutator()
+
+string = '''<html>
+    <head>
+        <link href="http://somewebsite.com" />
+    </head>
+    <body>
+        <h1>I'm not a web developer.</h1>
+    </body>
+
+    <div id="#lol">
+        <a href="http://google.com">Here is some link...</a>
+    </div>
+
+
+    <tail>
+        <a href="http://bing.com">Footer link</a>
+    </tail>
+</html>
+'''
+
+
+
+mut.mutate(string)
 
 # mut = StringMutator()
 # print(mut.meme_mutation(5.0))
@@ -69,15 +95,15 @@ from .complex_mutators import ListMutator, ObjectMutator
 # mut = BooleanMutator()
 # print(mut.mutate(result))
 
-dictionary = {"Arushi" : 'lolz', "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
+# dictionary = {"Arushi" : 'lolz', "Anuradha" : 21, "Mani" : 21, "Haritha" : 21} 
 
-lol = ObjectMutator()
+# lol = ObjectMutator()
 
-print(f"== {dictionary} == ")
-mutation = dictionary
-for i in range(2):
-    mutation = lol.mutate(dictionary)
-    print(mutation)
+# print(f"== {dictionary} == ")
+# mutation = dictionary
+# for i in range(2):
+#     mutation = lol.mutate(dictionary)
+#     print(mutation)
 
 # lis = [1, 2, 3]
 # l_mutator = ListMutator()
