@@ -8,12 +8,14 @@ print(__name__)
 print(__package__)
 
 from .xml_mutator import XmlMutator
+import xml.etree.ElementTree as ET
 # from .int_mutator import IntMutator
 # from .float_mutator import FloatMutator
 # from .string_mutator import StringMutator
 # from .boolean_mutator import BooleanMutator
 # from .csv_row_mutator import CsvRowMutator
 # from .complex_mutators import ListMutator, ObjectMutator
+
 
 mut = XmlMutator()
 
@@ -36,9 +38,20 @@ string = '''<html>
 </html>
 '''
 
+original = ET.fromstring(string)
+head = original.iter()
+next_node = head
+for i, node in enumerate(head):
+    print(f"-----\n{node.tag} before = {node.text}")
+    test_node = node
+    test_node.text = "lol"
+    test_node.set('new','changed')
+    print(f"{node.tag} after = {node.text} ({node.get('new')})")
 
+print(ET.tostring(original))
+# next_node
 
-mut.mutate(string)
+# mut.mutate(string)
 
 # mut = StringMutator()
 # print(mut.meme_mutation(5.0))

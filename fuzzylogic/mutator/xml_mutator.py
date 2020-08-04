@@ -10,23 +10,54 @@ class XmlMutator:
     def __init__(self):
         self._seed = 0
         self._original = None   # xml tree
-        self._found_bad = False   # indicator if
+        self._nodes = []        # xml nodes
+
+    """
+    Go through each node and mutate it...
+
+    Original mutate logic: mutate a leaf node
+    Current mutate logic: mutate a node by:
+     - mutate attribute value
+     - mutate text
+     - add attr (new)
+     - add text (when there wasn't previously one)
+     - remove att
+     - remove text
+
+    Return to string format using ET.tostring(root_node)
+    """
 
     def mutate(self, xml_input):
-        print(xml_input)
-        self._original = ET.fromstring(xml_input)
-        # print(list(self._original))
-        # final = self._mutate_(head)
-        self._found_bad = False
-        self._mutate_(self._original)
+        # print(xml_input)
+        self._analyse_(xml_input)
+
+        for node in self._original.iter():
+            self._seed += 1
+            print(f"{node.tag} = {node.text}")
 
     """
-    Find a node to mutate and mutate it.
-    However it needs to be a node at random... how to?
-
-    Original thought pattern: mutate a leaf node
-    Fixed thought pattern: mutate any node that has an attribute field or a leaf (add/remove/mutate text)? 
+    Prases string input and adds all nodes to a list
     """
+    ### IGNORE
+    def _analyse_(self, _input):
+        self._original = ET.fromstring(_input)
+        # iterate through all the nodes and add each to nodes lost
+        # xml_iter = self._original.iter()
+        # for i, node in enumerate(xml_iter):
+        #     print(f"{i}: {node.tag}")
+        #     self._nodes.append(node)
+    
+    """
+    Original mutate logic: mutate a leaf node
+    Current mutate logic: mutate a node by:
+     - mutate attribute value
+     - mutate text
+     - add attr (new)
+     - add text (when there wasn't previously one)
+     - remove att
+     - remove text
+    """
+    #### IGNORE
     def _mutate_(self, head):
         # finaly find a 
         if len(list(head)) == 0: # leaf
