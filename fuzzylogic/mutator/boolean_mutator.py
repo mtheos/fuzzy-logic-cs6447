@@ -4,3 +4,7 @@ class BooleanMutator:
 
     def mutate(self, boo):
         return not boo
+
+    def deterministic_mutator(self, i, strategy):
+        #todo: do different shit depending on the strategy
+        return [i]

@@ -1,6 +1,9 @@
 from fuzzylogic import mutator, executor
 from queue import PriorityQueue
 
+NO_STRATEGY = 'no strategy / random strategy for now'
+MAKE_ZERO = 'make_zero'
+
 def fuzz(binary, input_file):
     print(f'binary: {binary}')
     print(f'input: {input_file}')
@@ -56,7 +59,8 @@ def fuzz(binary, input_file):
         code = priority_info.return_code
         orchestrator.seen[_input] = priority_info
 
-        for mutation in orchestrator._mutator.mutate(_input):
+        #later, we will actuallly use a strategy. right now strategies are shit
+        for mutation in orchestrator._mutator.mutate(_input, NO_STRATEGY):
             if mutation not in orchestrator.seen:
                 prev[mutation] = _input
                 distance[mutation] = distance[_input] + 1

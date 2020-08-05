@@ -13,20 +13,60 @@ class JsonMutator:
         self._original = None    # Dictionary of json
         self._keys = None        # List of keys in json
         self._field_type = None  # Dictionary of key:type
+        self._static_mutators={str:StringMutator(),int:IntMutator(),float:FloatMutator(),bool:BooleanMutator()}
 
-    def mutate(self, json_input):
+    def mutate(self, json_input, strategy):
         # print('\n\n**********')
         # print('Mutator called with input')
         # print(json_input)
         # print('**********\n\n')
-        self._analyse_(json_input)
-        for key in self._keys:
-            self._seed += 1
-            output = dict(self._original)
-            output = self._mutate_(output, key)
-            output = json.dumps(output)
-            # print('New mutation =>', output)
-            yield output
+        if strategy == 'make_zero':
+            self._yields = []
+            self._strategy = strategy
+            self._analyse_(json_input)
+            self.recurse(self._original)
+            for y in self._yields:
+                yield y
+        else:
+            self._strategy = ''
+            self._analyse_(json_input)
+            for key in self._keys:
+                self._seed += 1
+                output = dict(self._original)
+                output = self._mutate_(output, key)
+                output = json.dumps(output)
+                yield output
+
+    def recurse(self, original):
+        #big TODO for andrew: make this also insert shit into dicts and lists
+        if type(original) is dict:
+            for k,v in original.items():
+                if type(v) is dict:
+                    self.recurse(v)
+                elif type(v) is list:
+                    self.recurse(v)
+                else:
+                    # get the static mutator for whatever type it is
+                    for mutation in self._static_mutators[type(v)].deterministic_mutator(v, self._strategy):
+                        tmp = v
+                        original[k] = mutation
+                        self._yields.append(json.dumps(self._original))
+                        original[k] = tmp
+                
+        elif type(original) is list:
+            for k in range(len(original)):
+                v = original[k]
+                if type(v) is dict:
+                    self.recurse(v)
+                elif type(v) is list:
+                    self.recurse(v)
+                else:
+                    for mutation in self._static_mutators[type(v)].deterministic_mutator(v, self._strategy):
+                        tmp = v
+                        original[k] = mutation
+                        self._yields.append(json.dumps(self._original))
+                        original[k] = tmp
+    
 
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)

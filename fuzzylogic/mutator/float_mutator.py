@@ -25,3 +25,7 @@ class FloatMutator:
     def _minus_mutation_(self, f):
         f -= random.uniform(1, 1000000)
         return f
+
+    def deterministic_mutator(self, i, strategy):
+        #todo: do different shit depending on the strategy
+        return [i]

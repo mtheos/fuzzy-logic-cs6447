@@ -66,4 +66,7 @@ class StringMutator:
         num = random.randint(1,20)
         return ("adam"*12) * num
 
+    def deterministic_mutator(self, i, strategy):
+        #todo: do different shit depending on the strategy
+        return [i]
 

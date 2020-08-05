@@ -25,3 +25,7 @@ class IntMutator:
     def _minus_mutation_(self, i):
         i -= random.randint(1, 1000000)
         return i
+
+    def deterministic_mutator(self, i, strategy):
+        #todo: do different shit depending on the strategy
+        return [i-1, i+1, 0, 2**31-1, 0-2**31]
