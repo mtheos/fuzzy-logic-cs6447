@@ -82,7 +82,13 @@ class PriorityInfo:
     def __init__(self, jumplist, code):
         self.jumps = jumplist
         self.return_code = code
-    
+        self.edges = {} # edges in the execution path
+        for i in range(1, len(self.jumps)):
+            if (self.jumps[i-1], self.jumps[i]) not in self.edges:
+                self.edges[(self.jumps[i-1], self.jumps[i])] = 1
+            else:
+                self.edges[(self.jumps[i-1], self.jumps[i])] += 1
+
     def __lt__(self, other):
         return self.priority_function() < other.priority_function()
 
