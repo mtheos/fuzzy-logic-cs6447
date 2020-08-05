@@ -14,7 +14,7 @@ class IntMutator:
         mutator = random.choice(options)
         return mutator(i)
     
-    def _meme_mutation_(self,i):
+    def _meme_mutation_(self, i):
         options = [0, (2**31) - 1, -(2**31), (2**32) - 1]
         return random.choice(options)
 

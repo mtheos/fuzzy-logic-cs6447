@@ -1,4 +1,4 @@
 #!/bin/sh
 
-python3 -m fuzzylogic $@
+python3 -m fuzzylogic "$@"
 
