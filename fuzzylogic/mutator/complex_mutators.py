@@ -16,16 +16,10 @@ class ObjectMutator:
         if self.depth < 1000:
             options = [
                 self._add_kv_,
-                self._add_kv_,
-                self._add_kv_,
-                self._add_kv_,
-                self._add_kv_, 
-                self._remove_kv_, 
-                self._mutate_type_,
-                self._mutate_type_,
+                self._remove_kv_,
                 self._mutate_type_,
                 ]
-            mutator = random.choice(options)
+            mutator = random.choices(options, weights = [5, 1, 3], k = 1)[0]
         self.depth -= 1
         return mutator(obj)
 
@@ -140,17 +134,11 @@ class ListMutator:
         self.seed += 1
         options = [
             self._add_elem_, 
-            self._add_elem_, 
-            self._add_elem_, 
-            self._add_elem_, 
-            self._add_elem_, 
             self._remove_elem_, 
-            self._mutate_type_,
-            self._mutate_type_,
             self._mutate_type_,
             self._swap_elements_,
             ]
-        mutator = random.choice(options)
+        mutator = random.choices(options, weights = [5,1,3,1], k = 1)[0]
         return mutator(lis)
 
     def _swap_elements_(self, lis):

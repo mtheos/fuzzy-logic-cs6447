@@ -9,26 +9,18 @@ class StringMutator:
         options = [
             self._del_rand_chars_, 
             self._flip_rand_chars_,
-            self._flip_rand_chars_,
-            self._flip_rand_chars_,
-            self._insert_rand_chars_,
-            self._insert_rand_chars_,
-            self._insert_rand_chars_,
-            self._insert_rand_chars_,
             self._insert_rand_chars_,
             self._meme_mutation_,
             self._insert_fmt_str_,
-            self._insert_fmt_str_,
-            self._insert_fmt_str_,
             ]
-        mutator = random.choice(options)
+        mutator = random.choices(options, weights=[1,3,5,1,3], k=1)[0]
         return mutator(s)
 
     def _meme_mutation_(self, s):
         options = [
             '',
             self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator(),
-            # self._insert_rand_newline_(s)
+            self._insert_rand_newline_(s)
             ]
         return random.choice(options)
 
