@@ -1,21 +1,18 @@
 import os
-# import re
-# import pwn
-# from subprocess import Popen, PIPE
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 
 
-class RunnerV2:
+class ThreadedRunner:
     _exit_codes_ = defaultdict(lambda: 'Something happened?')
     _exit_codes_[0] = 'Nope :('
-    _exit_codes_[-6] = 'abort! :('      # Popen
-    _exit_codes_[-11] = 'Segfault! :)'  # Popen
-    _exit_codes_[134] = 'abort! :('     # os.system
-    _exit_codes_[139] = 'Segfault! :)'  # os.system
+    _exit_codes_[-6] = 'abort! :('
+    _exit_codes_[-11] = 'Segfault! :)'
+    _exit_codes_[134] = 'abort! :('
+    _exit_codes_[139] = 'Segfault! :)'
 
     def __init__(self):
-        self._executor = ThreadPoolExecutor(max_workers=10)
+        self._executor = ThreadPoolExecutor(max_workers=os.cpu_count())
         self._next_task = 0
         self._tasks = {}
 
@@ -34,17 +31,18 @@ class RunnerV2:
         return task.code, task.input
 
     def run_process(self, binary, _input):
-        return self._run_process_cmd_(binary, _input)
+        return self._run_process_(binary, _input)
+        # return self._run_process_fake_(binary, _input)
 
-    def _run_process_cmd_(self, binary, _input):
+    def parse_code(self, code):
+        return self._exit_codes_[code]
+
+    def _run_process_(self, binary, _input):
         task_id = self._next_task
         self._next_task += 1
         future = self._executor.submit(self._run_task_, binary, _input, task_id)
         self._tasks[task_id] = Task(future, _input)
         return task_id
-
-    def parse_code(self, code):
-        return self._exit_codes_[code]
 
     def _run_task_(self, binary, _input, task_id):
         code = os.system(f'{binary} >/dev/null <<\'EOF\'\n{_input}EOF')
@@ -56,6 +54,17 @@ class RunnerV2:
             code >>= 8
         self._tasks[task_id].code = code
 
+    def _run_process_fake_(self, binary, _input):
+        task_id = self._next_task
+        self._next_task += 1
+        future = self._executor.submit(self._run_task_fake_, binary, _input, task_id)
+        self._tasks[task_id] = Task(future, _input)
+        return task_id
+
+    def _run_task_fake_(self, binary, _input, task_id):
+        os.system(f'{binary} >/dev/null <<\'EOF\'\n{_input}EOF')
+        self._tasks[task_id].code = 0
+
 
 class Task:
     def __init__(self, future, _input):
@@ -66,7 +75,7 @@ class Task:
 
 def bench_executor(commands):
     print('executor start')
-    runner = RunnerV2()
+    runner = ThreadedRunner()
     task_ids = []
     for cmd in commands:
         task_ids.append(runner.run_process(cmd, ''))
