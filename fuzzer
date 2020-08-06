@@ -1,4 +1,8 @@
 #!/bin/sh
 
+if ! command -v qemu-i386 2> /dev/null; then
+    echo "qemu not found"
+    echo "run install first / check path of qemu binaries"
+    exit
+fi
 python3 -m fuzzylogic "$@"
-
