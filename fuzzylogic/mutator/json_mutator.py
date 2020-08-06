@@ -15,7 +15,7 @@ class JsonMutator:
         self._field_type = None  # Dictionary of key:type
         self._static_mutators={str:StringMutator(),int:IntMutator(),float:FloatMutator(),bool:BooleanMutator()}
 
-    def mutate(self, json_input, strategy):
+    def mutate(self, json_input, strategy=None):
         # print('\n\n**********')
         # print('Mutator called with input')
         # print(json_input)
