@@ -9,6 +9,9 @@ print(__package__)
 
 from .xml_mutator import XmlMutator
 import xml.etree.ElementTree as ET
+import xmltodict
+import copy
+
 # from .int_mutator import IntMutator
 # from .float_mutator import FloatMutator
 # from .string_mutator import StringMutator
@@ -38,20 +41,62 @@ string = '''<html>
 </html>
 '''
 
-original = ET.fromstring(string)
-head = original.iter()
-next_node = head
-for i, node in enumerate(head):
-    print(f"-----\n{node.tag} before = {node.text}")
-    test_node = node
-    if i == 3:
-        new = head
-        new_next = head
-    test_node.text = "lol"
-    test_node.set('new','changed')
-    print(f"{node.tag} after = {node.text} ({node.get('new')})")
+# print(xmltodict.unparse(xmltodict.parse("""
+#     <mydocument has="an attribute">
+#       <and>
+#         <many new="wow">elements</many>
+#         <many>more elements
+#         </many>
+#       </and>
+#       <plus a="complex">
+#         element as well
+#       </plus>
+#       <lol></lol>
+#     </mydocument>
+#     """)))
 
-print(ET.tostring(original))
+original = """
+    <mydocument has="an attribute">
+      <and>
+        <many new="wow">elements</many>
+        <many>more elements
+        </many>
+      </and>
+      <plus a="complex">
+        element as well
+      </plus>
+      <lol></lol>
+    </mydocument>
+    """
+
+mut.mutate(original)
+
+# # del original["mydocument"]["plus"]["#text"]
+# original["mydocument"]["and"]["many"][1] = {"#text": "new one baby"}
+
+# print(original)
+
+# back = xmltodict.unparse(original)
+# print(back)
+
+# original = ET.fromstring(string)
+# print("******")
+# print(ET.tostring(original))
+# print("******")
+# head = original.iter()
+# next_node = head
+# for i, node in enumerate(head):
+#     tmp_text = str(node.text)
+#     tmp_attrib = dict(node.attrib)
+    
+#     node.text = "lol"
+#     node.set('new','changed')
+#     print(f"{i}: {ET.tostring(original).decode()}")
+    
+#     node.text = tmp_text
+#     node.attrib = tmp_attrib
+
+# print(ET.tostring(original))
 # next_node
 
 # mut.mutate(string)

@@ -1,5 +1,9 @@
 import random
-import xml.etree.ElementTree as ET
+import json
+# import xml.etree.ElementTree as ET
+import xmltodict
+import pprint
+from collections import OrderedDict
 from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
@@ -10,7 +14,7 @@ class XmlMutator:
     def __init__(self):
         self._seed = 0
         self._original = None   # xml tree
-        self._nodes = []        # xml nodes
+        self._yields = []       # yileds to yield
 
     """
     Go through each node and mutate it...
@@ -28,24 +32,74 @@ class XmlMutator:
     """
 
     def mutate(self, xml_input):
-        # print(xml_input)
         self._analyse_(xml_input)
-
-        for node in self._original.iter():
-            self._seed += 1
-            print(f"{node.tag} = {node.text}")
+        # print(xmltodict.unparse(self._original))
+        # print(json.dumps(self._original))
+        self._preprocessing_recurse_(self._original)
+        # print(xmltodict.unparse(self._original))
+        self.recurse(self._original)
+        print('\n'.join(self._yields))
+        print(len(self._yields))
+        
 
     """
-    Prases string input and adds all nodes to a list
+    Prases string input
     """
-    ### IGNORE
     def _analyse_(self, _input):
-        self._original = ET.fromstring(_input)
-        # iterate through all the nodes and add each to nodes lost
-        # xml_iter = self._original.iter()
-        # for i, node in enumerate(xml_iter):
-        #     print(f"{i}: {node.tag}")
-        #     self._nodes.append(node)
+        self._original = xmltodict.parse(_input,process_namespaces=True)
+    
+    """
+    TODO
+    """
+    def _preprocessing_recurse_(self, original):
+        # print("recursing into ", json.dumps(original))
+        # print(type(original))
+        if type(original) is OrderedDict:
+            for k,v in original.items():
+                # print ("k = ", k, " v= ", v)
+                self._preprocessing_recurse_(v)
+                
+        elif type(original) is list:
+            for k in range(len(original)):
+                v = original[k]
+                if type(v) is str:
+                    original[k] = {"#text":v}
+                elif type(v) is OrderedDict:
+                    self._preprocessing_recurse_(v)
+                elif type(v) is list:
+                    self._preprocessing_recurse_(v)
+    """
+    TODO
+    """
+    def recurse(self, original):
+        print("recursing into ", json.dumps(original))
+        if type(original) is OrderedDict:
+            for k,v in original.items():
+                print ("k = ", k, " v= ", v)
+                if type(v) is OrderedDict:
+                    self.recurse(v)
+                elif type(v) is list:
+                    self.recurse(v)
+                elif type(v) is str:
+                    for mutation in ['%n%n%n%n']:
+                        tmp = v
+                        original[k] = mutation
+                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                        original[k] = tmp
+                elif type(v) is None:
+                    #TODO
+                    pass
+        elif type(original) is list:
+            for k in range(len( original)):
+                v = original[k]
+                if type(v) is OrderedDict:
+                    self.recurse(v)
+                elif type(v) is list:
+                    self.recurse(v)
+                elif type(v) is None:
+                    #TODO
+                    pass
+
     
     """
     Original mutate logic: mutate a leaf node
