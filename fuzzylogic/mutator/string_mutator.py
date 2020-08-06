@@ -68,5 +68,6 @@ class StringMutator:
 
     def deterministic_mutator(self, i, strategy):
         #todo: do different shit depending on the strategy
-        return [i]
+        return [self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator(), 
+        "", self._insert_fmt_str_(i), i + self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
 

@@ -28,4 +28,4 @@ class FloatMutator:
 
     def deterministic_mutator(self, i, strategy):
         #todo: do different shit depending on the strategy
-        return [i]
+        return [i-1, i+1, 0, float('-inf'), float('inf'), float('NaN')]
