@@ -4,6 +4,9 @@
 Requires qemu. 
 ```apt-get install qemu```
 
+Requires xmltodict
+```pip install xmltodict```
+
 ##Running it:
 Can be run from as a package or using the provided script
 
