@@ -58,9 +58,9 @@ class StringMutator:
     
     def _insert_fmt_str_(self, s):
         if s == "":
-            return "%s"
+            return "%s%n%s%n%s%n"
         pos = random.randint(0, len(s) - 1)
-        return s[:pos] + '%s' + s[pos+1:]
+        return s[:pos] + '%s%n%s%n%s%n' + s[pos+1:]
     
     def _adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator(self):
         num = random.randint(1,20)
