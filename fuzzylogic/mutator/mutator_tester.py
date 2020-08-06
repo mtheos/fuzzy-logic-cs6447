@@ -44,6 +44,9 @@ next_node = head
 for i, node in enumerate(head):
     print(f"-----\n{node.tag} before = {node.text}")
     test_node = node
+    if i == 3:
+        new = head
+        new_next = head
     test_node.text = "lol"
     test_node.set('new','changed')
     print(f"{node.tag} after = {node.text} ({node.get('new')})")
