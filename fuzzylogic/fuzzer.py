@@ -1,6 +1,5 @@
 from fuzzylogic import mutator, executor
-# from .mutatorQueueOrchestrator import MutatorQueueOrchestrator
-from .mutatorQueueOrchestrator import FuzzOrchestrator
+from .fuzzOrchestrator import FuzzOrchestrator
 
 
 def fuzz(binary, input_file):
@@ -10,7 +9,6 @@ def fuzz(binary, input_file):
         content = f.read()
     mutator_instance = _select_mutator_(content)
     runner = executor.ThreadedRunner()
-    # orchestrator = MutatorQueueOrchestrator(mutator_instance, runner)
     orchestrator = FuzzOrchestrator(mutator_instance, runner)
     orchestrator.put(content, priority=-1e9)
     orchestrator.put(mutator_instance.empty(), priority=-1e9)
