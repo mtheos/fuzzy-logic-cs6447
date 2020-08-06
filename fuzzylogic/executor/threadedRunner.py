@@ -21,7 +21,9 @@ class ThreadedRunner:
     _exit_codes_[139] = 'Segfault! :)'
 
     def __init__(self):
-        self._num_workers = 16  # Felt cute, might tweak later
+        # double the number of cores seems to be optimal, after this performance starts to drop off, tanking at 3x
+        # memory footprint (driven by trace files) also plays a big role in performance. After 4GB on my machine performance drops sharply
+        self._num_workers = os.cpu_count() * 2  # Felt cute, might tweak later
         self._executor = PoolExecutor(max_workers=self._num_workers)
         self.architecture = None
         self._next_task = 0
@@ -66,6 +68,7 @@ class ThreadedRunner:
     def _run_process_(self, binary, _input):
         if self.architecture is None:
             self.architecture = pwn.ELF(binary).arch
+            # self.architecture = ''
         task_id = self._next_task
         self._next_task += 1
         future = self._executor.submit(self._run_task_, binary, _input, task_id, self.architecture)
@@ -113,35 +116,3 @@ class ThreadedRunner:
 #         self.input = _input
 #         self.trace_info = None
 #         self.code = None
-
-
-def bench_executor(commands):
-    print('executor start')
-    runner = ThreadedRunner()
-    task_ids = []
-    for cmd in commands:
-        task_ids.append(runner.run_process(cmd, ''))
-    print('processes started')
-    while len(task_ids) > 0:
-        task_id = task_ids[0]
-        if runner.is_done(task_id):
-            task_ids.remove(task_id)
-            code, _input, _ = runner.get_result(task_id)
-            if code != 0:
-                print(f'we did it reddit :) => {code} {runner.parse_code(code)}')
-            else:
-                print('nope :(')
-    print('executor end')
-
-
-def benchmark():
-    cli = [
-        'true',
-        './seg'
-    ]
-    commands = [cli[i % 2] for i in range(5000)]
-    bench_executor(commands)
-
-
-if __name__ == '__main__':
-    benchmark()
