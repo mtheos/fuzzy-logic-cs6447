@@ -7,4 +7,10 @@ class BooleanMutator:
 
     def deterministic_mutator(self, i, strategy):
         #todo: do different shit depending on the strategy
-        return [True, False]
+        if strategy is "true":
+            return [True]
+        if strategy is "false":
+            return [False]
+
+        else:
+            raise(KeyError("Please put in a proper strategy!"))

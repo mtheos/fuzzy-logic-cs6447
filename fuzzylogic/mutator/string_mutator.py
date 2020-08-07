@@ -69,9 +69,15 @@ class StringMutator:
     def deterministic_mutator(self, i, strategy):
         #todo: do different shit depending on the strategy
         mutation_list = []
-        # [self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator(), 
-        # "", i + self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
+        
+        if strategy is "append_large_string":
+            return [i + self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
 
+        if strategy is "zero":
+            return [""]
+
+        if strategy is "max":
+            return [self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
         # byte flipping each char with the other one flipped
         if strategy is "byte_flip":
             for iterator in range(len(i)):
