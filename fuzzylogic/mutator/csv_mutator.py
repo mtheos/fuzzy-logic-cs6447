@@ -17,7 +17,7 @@ class CsvMutator:
         self._field_type = None  # Dictionary of key:type
 
     # return a generator (i.e. list)
-    def mutate(self, csv_input):
+    def mutate(self, csv_input, strategy='none'):
         # print('\n\n**********')
         # print('Mutator called with input')
         # print(csv_input)
