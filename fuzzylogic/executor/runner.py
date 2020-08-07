@@ -2,7 +2,16 @@ import os
 from collections import defaultdict
 from .traceInfo import TraceInfo
 os.environ['PWNLIB_SILENT'] = '1'  # suppresses ELF output
-# import pwn
+try:
+    import pwn
+except Exception:
+    class pwn:  # pwn fails to import if your TTY doesn't support curses
+        class ELF:
+            def __init__(self, binary):
+                if 'xml3' in binary:
+                    self.arch = 'amd64'
+                else:
+                    self.arch = 'i386'
 
 
 class Runner:
@@ -15,7 +24,7 @@ class Runner:
 
     def __init__(self):
         self.architecture = None
-        self.TRACE_FILE = '/dev/shm/trace'  # implement file in memory properly later if this is too slow
+        self._trace_file = '/dev/shm/trace'  # implement file in memory properly later if this is too slow
 
     def run_process(self, binary, _input):
         return self._run_process_(binary, _input)
@@ -26,32 +35,39 @@ class Runner:
 
     def _run_process_(self, binary, _input):
         if self.architecture is None:
-            # self.architecture = pwn.ELF(binary).arch
-            self.architecture = 'i386'
+            self.architecture = pwn.ELF(binary).arch
 
-        if self.architecture != 'i386':
-            # Put EOF in quotes and you don't need to escape anything
-            the_command = f'{binary} >/dev/null <<\'EOF\'\n{_input}EOF'
-            code = os.system(the_command)
-            file_data = []
+        run_binary = f'{binary} >/dev/null 2>/dev/null <<\'EOF\'\n{_input}EOF'
+        if self.architecture not in ['i386', 'amd64']:
+            code = os.system(run_binary)
+            trace_data = []
         else:
-            # if its i386, use le qemu
-            the_command = f'qemu-i386 -d exec -D {self.TRACE_FILE} {binary} >/dev/null <<\'EOF\'\n{_input}EOF'
-            code = os.system(the_command)
+            if self.architecture == 'i386':
+                qemu = 'qemu-i386'
+            elif self.architecture == 'amd64':
+                qemu = 'qemu-x86_64'
+            else:
+                raise RuntimeError('If you got this error, you spelt i386 or amd64 wrong :)')
             max_file_size = int(1e9)  # if its bigger than this, dont bother
-            fd = os.open(self.TRACE_FILE, os.O_RDONLY)
+            code = os.system(f'{qemu} -d exec -D {self._trace_file} {run_binary}')
+            fd = os.open(self._trace_file, os.O_RDONLY)
             trace_file_data = os.read(fd, max_file_size)
             os.close(fd)
-            file_data = self.get_trace(trace_file_data)
-        return code, _input, TraceInfo(file_data)
+            os.remove(self._trace_file)
+            trace_data = self.get_trace(trace_file_data)
+        return code, _input, TraceInfo(trace_data)
 
     def _run_process_fake_(self, binary, _input):
         self._run_process_(binary, _input)
         return 0
 
     @staticmethod
-    def get_trace(file_data):
+    def get_trace(file_data, architecture):
+        # if you got this far and your binary wasn't i386 or amd64, you're probably already having a bad day
+        if architecture == 'amd64':
+            address_size = 16
+        else:
+            address_size = 8
         file_data = file_data[file_data.find(b'Trace'):]
-        # print('split = ', file_data.split(b']'))
-        trace = list(map(lambda x: int(x[-8:], 16), file_data.split(b']')[:-1]))
+        trace = list(map(lambda x: int(x[-address_size:], 0x10), file_data.split(b']')[:-1]))
         return trace
