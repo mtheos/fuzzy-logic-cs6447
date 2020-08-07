@@ -26,23 +26,32 @@ class ThreadedRunner:
     def __init__(self):
         # double the number of cores seems to be optimal, after this performance starts to drop off, tanking at 3x
         # memory footprint (driven by trace files) also plays a big role in performance. After 4GB on my machine performance drops sharply
+        self._runs = 0
+        self._tasks = {}
+        self._next_task = 0
+        self._shutdown = False
+        self._has_stalled = False
+        self._architecture = None
         self._num_workers = os.cpu_count() * 2  # Felt cute, might tweak later
         self._executor = PoolExecutor(max_workers=self._num_workers)
-        self._architecture = None
-        self._next_task = 0
-        self._tasks = {}
-        self._runs = 0
 
     def num_workers(self):
         return self._num_workers
 
     def shutdown(self):
+        self._shutdown = True
         self._executor.shutdown(wait=False)
 
+    def clear_stalled(self):
+        # stalled is called on 2 threads (reporting + work)
+        # clearing it is separate so we don't miss any stalls
+        self._has_stalled = False
+
     def stalled(self):
-        # If you didn't want me using private members you should have made it public
-        # return self._executor._work_queue.qsize() == 0
-        return self._executor._queue_count == 0
+        if self._shutdown:
+            return False
+        stalled = self._has_stalled
+        return stalled
 
     def is_done(self, task_id):
         task = self._tasks.get(task_id, None)
@@ -58,8 +67,7 @@ class ThreadedRunner:
         # if not task.future.done():
         if not task.done():
             raise BlockingIOError('Check is task is done with is_done(task_id) first')
-        # return task.code, task.input, task.trace_info
-        # return task.future.result()
+        del self._tasks[task_id]
         return task.result()
 
     def run_process(self, binary, _input):
@@ -68,14 +76,17 @@ class ThreadedRunner:
     def parse_code(self, code):
         return self._exit_codes_[code]
 
+    def get_arch(self):
+        return self._architecture
+
     def _run_process_(self, binary, _input):
         if self._architecture is None:
             self._architecture = pwn.ELF(binary).arch
-            # self.architecture = ''
+        if len(self._tasks) == 0:
+            self._has_stalled = True
         task_id = self._next_task
         self._next_task += 1
         future = self._executor.submit(self._run_task_, binary, _input, task_id, self._architecture)
-        # self._tasks[task_id] = Task(future, _input)
         self._tasks[task_id] = future
         return task_id
 
@@ -93,7 +104,7 @@ class ThreadedRunner:
             else:
                 raise RuntimeError('If you got this error, you spelt i386 or amd64 wrong :)')
             trace_file = f'/dev/shm/trace_{task_id}'
-            max_file_size = int(1e9)  # if its bigger than this, dont bother
+            max_file_size = int(1e9)  # if it's bigger than this, dont bother
             code = os.system(f'{qemu} -d exec -D {trace_file} {run_binary}')
             fd = os.open(trace_file, os.O_RDONLY)
             trace_file_data = os.read(fd, max_file_size)
@@ -104,10 +115,9 @@ class ThreadedRunner:
         # the high byte is the exit code and the low byte is the signal (if any)
         # so >> 8 will get just the exit code
         # performance hit of shift right is 50% so check!
+        # code = 0  # Sometimes I need it to run longer
         if code != 0:
             code >>= 8
-        # self._tasks[task_id].code = code
-        # self._tasks[task_id].trace_info = TraceInfo(trace_data)
         return code, _input, TraceInfo(trace_data)
 
     @staticmethod
