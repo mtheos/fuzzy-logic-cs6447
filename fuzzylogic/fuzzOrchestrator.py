@@ -14,6 +14,7 @@ class FuzzOrchestrator:
         self._runner = runner
         self._mutator = mutator
         self._to_mutate = Queue()
+        self._stat_printer = None
         self._running_tasks = Queue()
         self._fuzzer_inputs = PriorityQueue()
         self._limits = {
@@ -33,7 +34,8 @@ class FuzzOrchestrator:
         self._prev[_input] = previous
         self._distance[_input] = distance
 
-    def _get_memory_usage_mb_(self):
+    @staticmethod
+    def _get_memory_usage_mb_():
         return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000
 
     def final_result(self):
@@ -45,16 +47,19 @@ class FuzzOrchestrator:
             console = ' Fuzzy-Logic-6447 - Our logic is fuzzy but our minds are sharp\n\n'
             console += f' Total attempts : {self._runOrchestrator.total_runs()}\n'
             console += f' Worker Count   : {self._runner.num_workers()}\n'
-            console += f' Running Tasks  : {self._runOrchestrator.running()}\n'
-            console += f' Queued Inputs  : {self._fuzzer_inputs.qsize()}\n'
-            console += f' Awaiting Fuzz  : {self._mutateOrchestrator.awaiting_fuzzing()}\n'
+            console += f' Running Tasks  : {self._runOrchestrator.running()}     \n'
+            console += f' Queued Inputs  : {self._fuzzer_inputs.qsize()}     \n'
+            console += f' Awaiting Fuzz  : {self._mutateOrchestrator.awaiting_fuzzing()}     \n'
             console += f' Task Q Size    : {self._limits["MIN_RUNNING_INPUTS"]} - {self._limits["MAX_RUNNING_INPUTS"]}\n'
             console += f' Fuzz Q Size    : {self._limits["MIN_QUEUED_INPUTS"]} - {self._limits["MAX_QUEUED_INPUTS"]}\n'
-            console += f' Runner         : {"stalled!" if self._runOrchestrator.stalled() else "OK"}\n'
-            console += f' Mutator        : {"stalled!" if self._mutateOrchestrator.stalled() else "OK"}\n'
-            console += f' Max RSS        : {self._get_memory_usage_mb_()} MB (Limit {self._limits["MEMORY_LIMIT"]} MB)\n'
+            console += f' Runner         : {"Stalled!" if self._runOrchestrator.stalled() else "OK"}          \n'
+            console += f' Mutator        : {"Stalled!" if self._mutateOrchestrator.stalled() else "OK"}          \n'
+            console += f' Max RSS        : {self._get_memory_usage_mb_()} MB (Limit {self._limits["MEMORY_LIMIT"]} MB)     \n'
             print(console)
             if self._checkOrchestrator.final_result()[0] is not None:
+                print('*************')
+                print('Fuzzing done!')
+                print('*************')
                 break
             time.sleep(1)
 
@@ -71,7 +76,8 @@ class FuzzOrchestrator:
 
     def run(self, binary):
         os.system('clear')
-        Thread(target=self._print_stats_, name='stat-printer').start()
+        self._stat_printer = Thread(target=self._print_stats_, name='stat-printer')
+        self._stat_printer.start()
         delay = 0
         while True:
             delay = self.check_stall(delay)                  # Check if runner/mutator are running out of jobs
@@ -87,6 +93,7 @@ class FuzzOrchestrator:
             if self._checkOrchestrator.final_result()[0] is not None:
                 self._runner.shutdown()
                 break
+        self._stat_printer.join()
 
     def __repr__(self):
         return f'Inputs waiting to run: {len(self._fuzzer_inputs.queue)} | Inputs running: {len(self._running_tasks.queue)}'
@@ -147,7 +154,7 @@ class CheckOrchestrator:
                     loop_check = task_id  # first id is the loop check
                 continue
             code, _input, trace_info = self._runner.get_result(task_id)
-            if code != 0:
+            if code != 0 and code != 134:  # abort doesn't count
                 self._final_input = _input
                 self._final_code = code
             self._seen[_input] = trace_info
@@ -198,7 +205,7 @@ class MutateOrchestrator:
                                    strategy=this_strategy)
 
     def cull_traces(self):
-        limit = self._added_order.qsize() // 2
+        limit = self._added_order.qsize() // 4
         while self._added_order.qsize() > limit:
             earliest = self._added_order.get()
             trace_info = self._seen.get(earliest, None)
