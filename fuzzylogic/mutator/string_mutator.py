@@ -118,7 +118,8 @@ class StringMutator:
             return mutation_list
         
         else:
-            raise(KeyError("Please put in a proper strategy!"))
+            return [i] #lets return itself for no strategy.
+            #raise(KeyError("Please put in a proper strategy!"))
 
     def bitflipping(self, i):
         # literally flips the bits because ~ doesnt work for some reason???
