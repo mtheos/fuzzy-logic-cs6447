@@ -12,5 +12,7 @@ class BooleanMutator:
         if strategy is "false":
             return [False]
 
+        if strategy == 'make_zero':
+            return [True, False]
         else:
-            raise(KeyError("Please put in a proper strategy!"))
+            return [i]

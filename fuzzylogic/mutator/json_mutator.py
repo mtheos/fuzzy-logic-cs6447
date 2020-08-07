@@ -4,7 +4,7 @@ from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
 from .complex_mutators import ListMutator, ObjectMutator
-
+from ..strategy import Strategy
 
 class JsonMutator:
     def __init__(self):
@@ -15,12 +15,12 @@ class JsonMutator:
         self._field_type = None  # Dictionary of key:type
         self._static_mutators={str:StringMutator(),int:IntMutator(),float:FloatMutator(),bool:BooleanMutator()}
 
-    def mutate(self, json_input, strategy=None):
+    def mutate(self, json_input, strategy='none'):
         # print('\n\n**********')
         # print('Mutator called with input')
         # print(json_input)
         # print('**********\n\n')
-        if strategy == 'make_zero':
+        if strategy != 'none':#'make_zero':
             self._yields = []
             self._strategy = strategy
             self._analyse_(json_input)
@@ -40,6 +40,12 @@ class JsonMutator:
     def recurse(self, original):
         #big TODO for andrew: make this also insert shit into dicts and lists
         if type(original) is dict:
+            if (self._strategy == Strategy.ADD_DICTS):
+                for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
+                    original["additional_meme"+str(i)] = "some nice cool sample meme"
+                self._yields.append(json.dumps(self._original))
+                for i in range(Strategy.members_to_add_to_dict):
+                    del original["additional_meme"+str(i)]
             for k,v in original.items():
                 if type(v) is dict:
                     self.recurse(v)

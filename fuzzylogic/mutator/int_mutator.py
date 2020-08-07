@@ -27,7 +27,6 @@ class IntMutator:
         return i
 
     def deterministic_mutator(self, i, strategy):
-        
         if strategy is "increment":
             return [i+1]
 
@@ -43,5 +42,7 @@ class IntMutator:
         if strategy is "min":
             return [-(2**31)]
 
+        if strategy == 'make_zero':
+            return [i-1, i+1, 0, 2**31-1, 0-2**31]
         else:
-            raise(KeyError("Please put in a proper strategy!"))
+            return [i]

@@ -4,7 +4,7 @@ from threading import Thread
 from queue import PriorityQueue
 from queue import Queue
 import resource
-
+from .strategy import Strategy
 
 class FuzzOrchestrator:
     def __init__(self, mutator, runner):
@@ -170,12 +170,14 @@ class MutateOrchestrator:
         self._to_mutate = to_mutate
         self._fuzzer_inputs = fuzzer_inputs
         self._limits = limits
+        self._strategy = dict() #sorry mickey i ceebs constructing it up in fuzzer, hope it doesnt matter.
 
-    def _put_(self, _input, priority, previous, distance):
+    def _put_(self, _input, priority, previous, distance, strategy):
         self._fuzzer_inputs.put(QueueItem(_input, priority))
         self._added_order.put(_input)
         self._prev[_input] = previous
         self._distance[_input] = distance
+        self._strategy[_input] = strategy
 
     def create_more_inputs(self):
         # creating inputs is memory and time expensive O(n^2), pause creating inputs if we have a lot ready to run
@@ -184,11 +186,16 @@ class MutateOrchestrator:
         while not self._to_mutate.empty() and self.awaiting_fuzzing() < self._limits['MAX_QUEUED_INPUTS']:
             _input = self._to_mutate.get()
             trace_info = self._seen[_input]
-            for mutation in self._mutator.mutate(_input):
-                if mutation not in self._seen:
-                    distance = self._distance[_input] + 1
-                    priority = self._priority_function_(mutation, distance, trace_info)
-                    self._put_(_input=mutation, priority=priority, previous=_input, distance=distance)
+            for this_strategy in Strategy.STRATEGIES:
+                for mutation in self._mutator.mutate(_input, strategy=this_strategy):
+                    if mutation not in self._seen:
+                        distance = self._distance[_input] + 1
+                        priority = self._priority_function_(mutation, distance, trace_info)
+                        self._put_(_input=mutation, 
+                                   priority=priority,
+                                   previous=_input,
+                                   distance=distance,
+                                   strategy=this_strategy)
 
     def cull_traces(self):
         limit = self._added_order.qsize() // 2
@@ -210,7 +217,13 @@ class MutateOrchestrator:
             if j not in prev_jumps:
                 unique_discovery = 15000
                 break
-        return -1/(distance+15)*(len(trace_info.jumps()) + unique_discovery)
+        
+        if _input in self._prev and self._prev[_input] in self._strategy:
+            strategy_discount = 10 if self._strategy[self._prev[_input]] == Strategy.ADD_DICTS else 1
+        else: #deprioritise inputs that insert lots of shit
+            strategy_discount = 1
+
+        return -1/(distance+15)*(len(trace_info.jumps()) + unique_discovery)/strategy_discount
 
     def awaiting_fuzzing(self):
         return self._fuzzer_inputs.qsize()
