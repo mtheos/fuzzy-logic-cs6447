@@ -1,4 +1,5 @@
 import random
+import xml
 # import json
 # import xml.etree.ElementTree as ET
 import xmltodict
@@ -34,7 +35,10 @@ class XmlMutator:
 
     def mutate(self, xml_input, strategy='none'):
         self._yields = []
-        self._analyse_(xml_input)
+        try:
+            self._analyse_(xml_input)
+        except xml.parsers.expat.ExpatError: # parser cannot parse input, ignore this input
+            return []
         self._preprocessing_recurse_(self._original)
         
         # normal mutation
@@ -83,11 +87,23 @@ class XmlMutator:
             for k,v in original.items():
                 # print ("k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
+                    v_original = OrderedDict(v)
+                    for mutation in self._mutate_ordered_dict(OrderedDict(v)):
+                        original[k] = OrderedDict(mutation)
+                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                        original[k] = OrderedDict(v_original)
                     self.recurse(v)
                 elif type(v) is list:
+                    """
+                    TODO:
+                        1. Add new fucky element
+                        2. Remove Element
+                    """
                     self.recurse(v)
                 elif v is None:
-                    #TODO: add new...
+                    """
+                    TODO: Create new fucky element
+                    """
                     continue
                 else:
                     v_type = self._get_type_(v)
@@ -110,13 +126,84 @@ class XmlMutator:
             for k in range(len( original)):
                 v = original[k]
                 if type(v) is OrderedDict:
+                    """
+                    TODO:
+                        1. Add attribute
+                        2. Add text (if doesn't exist)
+                        3. Remove attribute
+                        4. remove text
+                        5. Add element
+                        6. Remove Element
+                    """
                     self.recurse(v)
                 elif type(v) is list:
+                    """
+                    TODO:
+                        1. Add new fucky element
+                        2. Remove Element
+                    """
                     self.recurse(v)
                 elif type(v) is None:
                     #TODO
                     pass
+    
+    """
+    TODO:
+        1. Add attribute
+        2. Add text (if doesn't exist)
+        3. Remove attribute
+        4. Remove text
+        5. Add element
+        6. Remove Element
+    """
+    def _mutate_ordered_dict(self, v):
+        mutations = []
+        original = OrderedDict(v)
+        
+        # add attribute
+        v["@_new_att_"+str(self._seed)] = "new_att_value_"+str(self._seed)
+        mutations.append(OrderedDict(v))
+        v = OrderedDict(original)
+        
+        # remove attribute
+        for key in [key for key in v.keys() if key[0] == '@']:
+            del v[key]
+            mutations.append(OrderedDict(v))
+            v = OrderedDict(original)
+        
+        # add text
+        if '#text' not in v.keys():
+            v['#text'] = 'new_text_'+str(self._seed)
+            mutations.append(OrderedDict(v))
+            v = OrderedDict(original)
+        
+        # remove text
+        if '#text' in v.keys():
+            del v['#text']
+            mutations.append(OrderedDict(v))
+            v = OrderedDict(original)
+        
+        # add element
+        v["_new_element_"+str(self._seed)] = OrderedDict()
+        mutations.append(OrderedDict(v))
+        v = OrderedDict(original)
+        
+        # remove element
+        for key in [key for key in v.keys() if key[0] != '@' and key[0] != '#']:
+            del v[key]
+            mutations.append(OrderedDict(v))
+            v = OrderedDict(original)
 
+        self._seed += 1
+        return mutations
+
+    """
+    TODO:
+        1. Add new fucky element
+        2. Remove Element
+    """
+    def _mutate_list(self, v):
+        pass
     
     def _get_type_(self, v):
         if self._is_int_(v):

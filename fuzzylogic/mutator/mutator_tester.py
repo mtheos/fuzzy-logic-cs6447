@@ -10,7 +10,7 @@ print(__package__)
 from .xml_mutator import XmlMutator
 import xml.etree.ElementTree as ET
 import xmltodict
-import copy
+from collections import OrderedDict
 
 # def _get_type_(v):
 #     if _is_int_(v):
@@ -95,13 +95,31 @@ original = """
       <plus a="complex">
         element as well
       </plus>
-      <lol></lol>
+      <lol id="lol"></lol>
       <yay>False</yay>
     </mydocument>
     """
 
 # print(type(None))
 mut.mutate(original)
+
+dictyy = OrderedDict()
+dictyy["lol"] = 1
+dictyy["@atty"] = 2 
+dictyy["#text"] = 3 
+# print("\n".join(mut._mutate_ordered_dict(dictyy)))
+# print(mut._mutate_ordered_dict(dictyy))
+
+dicty = {
+    "lol": 2,
+    "@atty": 3,
+    "@atty2": 4,
+    "lol2": 2,
+    "#text": 2,
+}
+
+# print("\n".join([x for x in dicty.keys() if x[0] == '@']))
+# print("\n".join([x for x in dicty.keys() if x[0] != '@' and x[0] != '#']))
 
 # v = '65.32323'
 # v_type = _get_type_(v)
