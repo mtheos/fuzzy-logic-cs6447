@@ -14,11 +14,12 @@ def fuzz(binary, input_file):
     orchestrator.put(mutator_instance.empty(), priority=-1e9)
     orchestrator.run(binary)
     code, _input, runs = orchestrator.final_result()
-    print('*' * 20)
-    print('We did it Reddit! (Nice work fam ^_^)')
-    print(f'{runs} inputs tried')
-    print(f'Exit code: {code} => {runner.parse_code(code)}')
-    print('*' * 20)
+    console = f'\n\n {"*" * 40}\n'
+    console += f' We did it Reddit! (Nice work fam ^_^)\n'
+    console += f' {runs} inputs tried\n'
+    console += f' Exit code: {code} => {runner.parse_code(code)}\n'
+    console += f' {"*" * 40}\n'
+    print(console)
     with open('bad.txt', 'w') as f:
         f.write(_input + '\n')
 
