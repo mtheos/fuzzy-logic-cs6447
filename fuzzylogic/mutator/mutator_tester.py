@@ -12,6 +12,36 @@ import xml.etree.ElementTree as ET
 import xmltodict
 import copy
 
+def _get_type_(v):
+    if _is_int_(v):
+        return int
+    elif _is_float_(v):
+        return float
+    elif _is_str_(v):
+        return str
+    raise TypeError(f'*** {v} is an unhandled type ***')
+
+def _is_float_(v):
+    try:
+        float(v)
+        return True
+    except ValueError:
+        return False
+
+def _is_int_(v):
+    try:
+        int(v)
+        return True
+    except ValueError:
+        return False
+
+def _is_str_(v):
+    try:
+        str(v)
+        return True
+    except ValueError:
+        raise Exception('Can you imagine something that will fail this?')
+
 # from .int_mutator import IntMutator
 # from .float_mutator import FloatMutator
 # from .string_mutator import StringMutator
@@ -59,8 +89,8 @@ original = """
     <mydocument has="an attribute">
       <and>
         <many new="wow">elements</many>
-        <many>more elements
-        </many>
+        <many>55.55</many>
+        <many>69</many>
       </and>
       <plus a="complex">
         element as well
@@ -69,7 +99,13 @@ original = """
     </mydocument>
     """
 
+# print(type(None))
 mut.mutate(original)
+
+# v = '65.32323'
+# v_type = _get_type_(v)
+# typed_v = v_type(v)
+# print(type(typed_v))
 
 # # del original["mydocument"]["plus"]["#text"]
 # original["mydocument"]["and"]["many"][1] = {"#text": "new one baby"}

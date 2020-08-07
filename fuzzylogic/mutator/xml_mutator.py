@@ -15,6 +15,8 @@ class XmlMutator:
         self._seed = 0
         self._original = None   # xml tree
         self._yields = []       # yileds to yield
+        self._strategy = None   # strat
+        self._mutators = {str:StringMutator(),int:IntMutator(),float:FloatMutator(),bool:BooleanMutator()}
 
     """
     Go through each node and mutate it...
@@ -39,7 +41,6 @@ class XmlMutator:
         # print(xmltodict.unparse(self._original))
         self.recurse(self._original)
         print('\n'.join(self._yields))
-        print(len(self._yields))
         
 
     """
@@ -56,7 +57,6 @@ class XmlMutator:
         # print(type(original))
         if type(original) is OrderedDict:
             for k,v in original.items():
-                # print ("k = ", k, " v= ", v)
                 self._preprocessing_recurse_(v)
                 
         elif type(original) is list:
@@ -68,27 +68,47 @@ class XmlMutator:
                     self._preprocessing_recurse_(v)
                 elif type(v) is list:
                     self._preprocessing_recurse_(v)
+        
     """
-    TODO
+    individual types:
+        - finding the type
+        - calling the right mutator
+    A None mutator
+        - creates a filled element
+    Add/Remove attributes
+    Add/Remove text
+    stategies
+        - Add/remove elements functionality
+    
     """
     def recurse(self, original):
         print("recursing into ", json.dumps(original))
         if type(original) is OrderedDict:
             for k,v in original.items():
-                print ("k = ", k, " v= ", v)
+                print ("k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
                     self.recurse(v)
                 elif type(v) is list:
                     self.recurse(v)
-                elif type(v) is str:
-                    for mutation in ['%n%n%n%n']:
+                elif v is None:
+                    pass
+                else:
+                    v_type = self._get_type_(v)
+                    typed_v = v_type(v)
+                    for mutation in self._mutators[v_type].mutate(typed_v):
                         tmp = v
-                        original[k] = mutation
+                        print(self._mutators[v_type], mutation)
+                        original[k] = str(mutation)
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = tmp
-                elif type(v) is None:
-                    #TODO
-                    pass
+                # else:
+                #     if self._strategy != None:
+                #         for mutation in self._static_mutators[type(v)].deterministic_mutator(v, self._strategy):
+                #             tmp = v
+                #             original[k] = mutation
+                #             self._yields.append(json.dumps(self._original))
+                #             original[k] = tmp
+
         elif type(original) is list:
             for k in range(len( original)):
                 v = original[k]
@@ -101,46 +121,43 @@ class XmlMutator:
                     pass
 
     
-    """
-    Original mutate logic: mutate a leaf node
-    Current mutate logic: mutate a node by:
-     - mutate attribute value
-     - mutate text
-     - add attr (new)
-     - add text (when there wasn't previously one)
-     - remove att
-     - remove text
-    """
-    #### IGNORE
-    def _mutate_(self, head):
-        # finaly find a 
-        if len(list(head)) == 0: # leaf
-            if len(head.keys()) == 0:
-                self._found_bad = True
-                return head      # indiciate that a node wasn't mutated and needs to find another to mutate.
-            
-            rand_att = random.choice(list(head.keys()).append('text'))
-            print(rand_att)
-            return head
-        
-        # get nodes that contain attributes
-        nodes_list = [node for node in list(head) if (len(node.keys()) != 0 or node.text != None)]
-        print(f"Nodes with an attribute or text: {nodes_list}")
-        if len(nodes_list) == 0:
-            return head
-        
-        rand_node = random.choice(nodes_list)
-        
-        print(rand_node.tag)
-        while True:
-            new = self._mutate_(rand_node)
-            if self._found_bad == False:
-                break
+    def _get_type_(self, v):
+        if self._is_int_(v):
+            return int
+        elif self._is_float_(v):
+            return float
+        elif self._is_str_(v):
+            return str
+        elif self._is_None_(v):
+            return None
+        raise TypeError(f'*** {v} is an unhandled type ***')
 
+    @staticmethod
+    def _is_float_(v):
+        try:
+            float(v)
+            return True
+        except ValueError:
+            return False
 
-            
-        # print(new.tag)
-        return head
+    @staticmethod
+    def _is_int_(v):
+        try:
+            int(v)
+            return True
+        except ValueError:
+            return False
 
+    @staticmethod
+    def _is_str_(v):
+        try:
+            str(v)
+            return True
+        except ValueError:
+            raise Exception('Can you imagine something that will fail this?')
 
-    
+    @staticmethod
+    def _is_None_(v):
+        if v is None:
+            return True
+        return False
