@@ -23,7 +23,7 @@ class Runner:
     _exit_codes_[35584] = 'Segfault! :)'
 
     def __init__(self):
-        self.architecture = None
+        self._architecture = None
         self._trace_file = '/dev/shm/trace'  # implement file in memory properly later if this is too slow
 
     def run_process(self, binary, _input):
@@ -33,18 +33,21 @@ class Runner:
     def parse_code(self, code):
         return self._exit_codes_[code]
 
+    def get_arch(self):
+        return self._architecture
+
     def _run_process_(self, binary, _input):
-        if self.architecture is None:
-            self.architecture = pwn.ELF(binary).arch
+        if self._architecture is None:
+            self._architecture = pwn.ELF(binary).arch
 
         run_binary = f'{binary} >/dev/null 2>/dev/null <<\'EOF\'\n{_input}EOF'
-        if self.architecture not in ['i386', 'amd64']:
+        if self._architecture not in ['i386', 'amd64']:
             code = os.system(run_binary)
             trace_data = []
         else:
-            if self.architecture == 'i386':
+            if self._architecture == 'i386':
                 qemu = 'qemu-i386'
-            elif self.architecture == 'amd64':
+            elif self._architecture == 'amd64':
                 qemu = 'qemu-x86_64'
             else:
                 raise RuntimeError('If you got this error, you spelt i386 or amd64 wrong :)')
