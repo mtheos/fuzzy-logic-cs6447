@@ -72,13 +72,14 @@ class XmlMutator:
                     self._preprocessing_recurse_(v)
         
     """
-    individual types:
+    TODO
+    individual types: **DONE**
         - finding the type
         - calling the right mutator
     A None mutator
         - creates a filled element
-    Add/Remove attributes
-    Add/Remove text
+    OrderedDict mutator **DONE**
+    List mutator 
     stategies
         - Add/remove elements functionality
     """
@@ -144,7 +145,8 @@ class XmlMutator:
                     pass
     
     """
-    TODO:
+    Performs each of these mutations on the ordred dict
+    and returns an array of these mutations:
         1. Add attribute
         2. Add text (if doesn't exist)
         3. Remove attribute
