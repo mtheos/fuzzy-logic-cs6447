@@ -1,13 +1,18 @@
 class TraceInfo:
     def __init__(self, jumps):
         # self._jumps = jumps
+        BEFORE_START_OF_CODE = 0x08049000
+        AFTER_END_OF_CODE = 0x09000000
         self._jumps = sorted(set(jumps))  # sorted will make a list
-        # self._edges = {}  # edges in the execution path
-        # for i in range(1, len(self._jumps)):
-        #     if (self._jumps[i-1], self._jumps[i]) not in self._edges:
-        #         self._edges[(self._jumps[i - 1], self._jumps[i])] = 1
-        #     else:
-        #         self._edges[(self._jumps[i - 1], self._jumps[i])] += 1
+        self._edges = {}  # edges in the execution path
+        for i in range(1, len(self._jumps)):
+            if self._jumps[i] < BEFORE_START_OF_CODE or self._jumps[i] > AFTER_END_OF_CODE or \
+               self._jumps[i-1] < BEFORE_START_OF_CODE or self._jumps[i-1] > AFTER_END_OF_CODE:
+                continue
+            if (self._jumps[i-1], self._jumps[i]) not in self._edges:
+                self._edges[(self._jumps[i - 1], self._jumps[i])] = 1
+            else:
+                self._edges[(self._jumps[i - 1], self._jumps[i])] += 1
 
     def jumps(self):
         return self._jumps

@@ -9,6 +9,7 @@ from .float_mutator import FloatMutator
 from .string_mutator import StringMutator
 from .boolean_mutator import BooleanMutator
 from .complex_mutators import ListMutator, ObjectMutator
+from ..strategy import Strategy
 
 class XmlMutator:
     def __init__(self):
@@ -40,7 +41,7 @@ class XmlMutator:
         except xml.parsers.expat.ExpatError: # parser cannot parse input, ignore this input
             return []
         self._preprocessing_recurse_(self._original)
-        
+        self._strategy = strategy
         # normal mutation
         self.recurse(self._original)
         # print("\n".join(self._yields))
@@ -85,6 +86,12 @@ class XmlMutator:
     """
     def recurse(self, original):
         if type(original) is OrderedDict:
+            if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
+                for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
+                    original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
+                self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                for i in range(Strategy.members_to_add_to_dict):
+                    del original["tag"+str(i)]
             for k,v in original.items():
                 # print ("k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
