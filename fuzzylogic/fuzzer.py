@@ -14,11 +14,27 @@ def fuzz(binary, input_file):
     orchestrator.put(mutator_instance.empty(), priority=-1e9)
     orchestrator.run(binary)
     code, _input, runs = orchestrator.final_result()
-    console = f'\n\n {"*" * 40}\n'
-    console += f' We did it Reddit! (Nice work fam ^_^)\n'
-    console += f' {runs} inputs tried\n'
-    console += f' Exit code: {code} => {runner.parse_code(code)}\n'
-    console += f' {"*" * 40}\n'
+    if code == 6447:
+        console = f'\n\n {"#" * 20}\n'
+        console += f' User exit\n'
+        console += f' {runs} inputs tried\n'
+        console += f' {"#" * 20}\n'
+    elif code == 6847:
+        console = f'\n\n {"#" * 20}\n'
+        console += f' Debug exit :)\n'
+        console += f' {runs} inputs tried\n'
+        console += f' {"#" * 20}\n'
+    elif code == 6448:
+        console = f'\n\n {"#" * 40}\n'
+        console += f' Exception in fuzzer! :\'(\n'
+        console += f' Exception => {_input}\n'
+        console += f' {"#" * 40}\n'
+    else:
+        console = f'\n\n {"*" * 40}\n'
+        console += f' We did it Reddit! (Nice work fam ^_^)\n'
+        console += f' {runs} inputs tried\n'
+        console += f' Exit code: {code} => {runner.parse_code(code)}\n'
+        console += f' {"*" * 40}\n'
     print(console)
     with open('bad.txt', 'w') as f:
         f.write(_input + '\n')
