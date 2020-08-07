@@ -1,8 +1,7 @@
 import random
-import json
+# import json
 # import xml.etree.ElementTree as ET
 import xmltodict
-import pprint
 from collections import OrderedDict
 from .int_mutator import IntMutator
 from .float_mutator import FloatMutator
@@ -37,17 +36,20 @@ class XmlMutator:
         self._yields = []
         self._analyse_(xml_input)
         self._preprocessing_recurse_(self._original)
+        
+        # normal mutation
         self.recurse(self._original)
+        # print("\n".join(self._yields))
         return self._yields
 
     """
-    Prases string input
+    Parses string input
     """
     def _analyse_(self, _input):
         self._original = xmltodict.parse(_input,process_namespaces=True)
     
     """
-    TODO
+    Some preprocessing to make adding/removing attributes/text easier
     """
     def _preprocessing_recurse_(self, original):
         if type(original) is OrderedDict:
@@ -58,7 +60,8 @@ class XmlMutator:
             for k in range(len(original)):
                 v = original[k]
                 if type(v) is str:
-                    original[k] = {"#text":v}
+                    original[k] = OrderedDict()
+                    original[k]["#text"] = v
                 elif type(v) is OrderedDict:
                     self._preprocessing_recurse_(v)
                 elif type(v) is list:
@@ -74,27 +77,27 @@ class XmlMutator:
     Add/Remove text
     stategies
         - Add/remove elements functionality
-    
     """
     def recurse(self, original):
         if type(original) is OrderedDict:
             for k,v in original.items():
-                print ("k = ", k, " v = ", v)
+                # print ("k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
                     self.recurse(v)
                 elif type(v) is list:
                     self.recurse(v)
                 elif v is None:
-                    pass
+                    #TODO: add new...
+                    continue
                 else:
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
-                    for mutation in self._mutators[v_type].mutate(typed_v):
-                        tmp = v
-                        print(self._mutators[v_type], mutation)
-                        original[k] = str(mutation)
-                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                        original[k] = tmp
+                    mutation = self._mutators[v_type].mutate(typed_v)
+                    tmp = typed_v
+                    # print(self._mutators[v_type], mutation)
+                    original[k] = str(mutation)
+                    self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    original[k] = str(tmp)
                 # else:
                 #     if self._strategy != None:
                 #         for mutation in self._static_mutators[type(v)].deterministic_mutator(v, self._strategy):
@@ -155,6 +158,7 @@ class XmlMutator:
         if v is None:
             return True
         return False
+    
     def empty(self):
         return "<html></html>"
 
