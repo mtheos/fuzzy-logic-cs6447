@@ -126,15 +126,11 @@ class XmlMutator:
             for k in range(len( original)):
                 v = original[k]
                 if type(v) is OrderedDict:
-                    """
-                    TODO:
-                        1. Add attribute
-                        2. Add text (if doesn't exist)
-                        3. Remove attribute
-                        4. remove text
-                        5. Add element
-                        6. Remove Element
-                    """
+                    v_original = OrderedDict(v)
+                    for mutation in self._mutate_ordered_dict(OrderedDict(v)):
+                        original[k] = OrderedDict(mutation)
+                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                        original[k] = OrderedDict(v_original)
                     self.recurse(v)
                 elif type(v) is list:
                     """
@@ -183,7 +179,7 @@ class XmlMutator:
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
         
-        # add element
+        # add element TODO add random shit to element?
         v["_new_element_"+str(self._seed)] = OrderedDict()
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
