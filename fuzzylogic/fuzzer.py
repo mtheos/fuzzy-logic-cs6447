@@ -35,7 +35,7 @@ def _select_mutator_(content):
         mutator_instance = mutator.CsvMutator()
     elif content_type == mutator.RET_XML:
         print('Input Type: XML')
-        mutator_instance = None
+        mutator_instance = mutator.XmlMutator()
     elif content_type == mutator.RET_MULTILINE_TEXT:
         print('Input Type: Plain Text')
         mutator_instance = None

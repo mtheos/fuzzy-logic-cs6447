@@ -68,28 +68,61 @@ class StringMutator:
 
     def deterministic_mutator(self, i, strategy):
         #todo: do different shit depending on the strategy
-        mutation_list = [self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator(), 
-        "", i + self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
+        mutation_list = []
+        
+        if strategy is "append_large_string":
+            return [i + self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
 
+        if strategy is "zero":
+            return [""]
+
+        if strategy is "max":
+            return [self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
         # byte flipping each char with the other one flipped
-        for iterator in range(len(i)):
-            temp = i 
-            changed_bit = ~(ord(temp[iterator]))
-            flipped = temp[:iterator] + (chr(changed_bit % 128)) + temp[iterator + 1:]
-            mutation_list.append(flipped)
+        if strategy is "byte_flip":
+            for iterator in range(len(i)):
+                temp = i 
+                changed_bit = ~(ord(temp[iterator]))
+                flipped = temp[:iterator] + chr(changed_bit % 128) + temp[iterator + 1:]
+                mutation_list.append(flipped)
+            return mutation_list
 
         # format string 
-        for iterator in range(len(i)):
-            temp = i
-            changed = temp[:iterator] + " %s " + temp[iterator + 1:]
-            mutation_list.append(changed)
+        if strategy is "format":
+            for iterator in range(len(i)):
+                temp = i
+                changed = temp[:iterator] + " %s " + temp[iterator + 1:]
+                mutation_list.append(changed)
+            return mutation_list
 
         # non ascii (unicode)
-        for iterator in range(len(i)):
-            temp = i
-            changed = temp[:iterator] + chr(random.randint(0xA1, 0xFF00)) + temp[iterator + 1:]
-            mutation_list.append(changed)
-        
-        # TODO: bitflips            
+        if strategy is "non_ascii":
+            for iterator in range(len(i)):
+                temp = i
+                changed = temp[:iterator] + chr(random.randint(0xA1, 0xFF00)) + temp[iterator + 1:]
+                mutation_list.append(changed)
+            return mutation_list
+    
+        # bitflips
+        if strategy is "bit_flip":
+            for iterator in range(len(i)):
+                temp = i
+                byte = format(ord(temp[iterator]),"b")
+                for byte_it in range(len(byte)):
+                    flipped_bit = self.bitflipping(int(byte[byte_it]))
+                    final_byte = byte[:byte_it] + str(flipped_bit) + byte[byte_it + 1:]
+                    final_byte = int(final_byte, 2)
+                    final_str = temp[:iterator] + chr(final_byte) + temp[iterator + 1:]
+                    mutation_list.append(final_str)
 
-        return mutation_list
+            return mutation_list
+        
+        else:
+            raise(KeyError("Please put in a proper strategy!"))
+
+    def bitflipping(self, i):
+        # literally flips the bits because ~ doesnt work for some reason???
+        if i == 0:
+            return 1
+        else:
+            return 0

@@ -28,4 +28,17 @@ class FloatMutator:
 
     def deterministic_mutator(self, i, strategy):
         #todo: do different shit depending on the strategy
-        return [i-1, i+1, 0, float('-inf'), float('inf'), float('NaN')]
+        if strategy is "increment":
+            return [i+1]
+        if strategy is "decrement":
+            return [i-1]
+        if strategy is "zero":
+            return [0]
+        if strategy is "min":
+            return [float("-inf")]
+        if strategy is "max":
+            return [float("inf")]
+        if strategy is "na":
+            return [float("NaN")]
+        else:
+            raise(KeyError("Please put in a proper strategy!"))

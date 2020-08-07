@@ -34,14 +34,11 @@ class XmlMutator:
     """
 
     def mutate(self, xml_input):
+        self._yields = []
         self._analyse_(xml_input)
-        # print(xmltodict.unparse(self._original))
-        # print(json.dumps(self._original))
         self._preprocessing_recurse_(self._original)
-        # print(xmltodict.unparse(self._original))
         self.recurse(self._original)
-        print('\n'.join(self._yields))
-        
+        return self._yields
 
     """
     Prases string input
@@ -53,8 +50,6 @@ class XmlMutator:
     TODO
     """
     def _preprocessing_recurse_(self, original):
-        # print("recursing into ", json.dumps(original))
-        # print(type(original))
         if type(original) is OrderedDict:
             for k,v in original.items():
                 self._preprocessing_recurse_(v)
@@ -82,7 +77,6 @@ class XmlMutator:
     
     """
     def recurse(self, original):
-        print("recursing into ", json.dumps(original))
         if type(original) is OrderedDict:
             for k,v in original.items():
                 print ("k = ", k, " v = ", v)
@@ -161,3 +155,6 @@ class XmlMutator:
         if v is None:
             return True
         return False
+    def empty(self):
+        return "<html></html>"
+
