@@ -7,10 +7,32 @@ __package__ = 'fuzzylogic.mutator'
 print(__name__)
 print(__package__)
 
+import re
 from .xml_mutator import XmlMutator
 import xml.etree.ElementTree as ET
 import xmltodict
 from collections import OrderedDict
+
+def _get_type_(v):
+    if _is_int_(v):
+        return int
+    elif _is_float_(v):
+        return float
+    raise TypeError(f'*** {v} is an unhandled type ***')
+
+def _is_float_(v):
+    try:
+        float(v)
+        return True
+    except ValueError:
+        return False
+
+def _is_int_(v):
+    try:
+        int(v)
+        return True
+    except ValueError:
+        return False
 
 # def _get_type_(v):
 #     if _is_int_(v):
@@ -100,8 +122,9 @@ original = """
     </mydocument>
     """
 
+
 # print(type(None))
-mut.mutate(original)
+# mut.mutate(original)
 
 dictyy = OrderedDict()
 dictyy["lol"] = 1
@@ -117,6 +140,30 @@ dicty = {
     "lol2": 2,
     "#text": 2,
 }
+
+string ='hell1123 wow 32yes, how is lif3 so do32.22'
+
+def split_string_by_types(string):
+    print(f"\n{string}")
+
+    nums = re.findall(r'-?\d+\.?\d*',string)
+    nums = [_get_type_(x)(x) for x in nums]
+
+    str_broken = []
+    for num in nums:
+        str_broken.append(string[:string.index(str(num))])
+        str_broken.append(num)
+        min = string.index(str(num)) + len(str(num))
+        string = string[min:]
+        # print(num)
+        # str_broken.append()
+        # print(str_broken)
+
+    # print(str_broken)
+    return str_broken
+# print("\n".join(ints))
+
+print(split_string_by_types(string))
 
 # print("\n".join([x for x in dicty.keys() if x[0] == '@']))
 # print("\n".join([x for x in dicty.keys() if x[0] != '@' and x[0] != '#']))

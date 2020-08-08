@@ -92,6 +92,7 @@ class XmlMutator:
                 self._yields.append(xmltodict.unparse(self._original, full_document=False))
                 for i in range(Strategy.members_to_add_to_dict):
                     del original["tag"+str(i)]
+            
             for k,v in original.items():
                 # print ("k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
