@@ -32,7 +32,7 @@ class XmlMutator:
     Return to string format using ET.tostring(root_node)
     """
 
-    def mutate(self, xml_input, strategy='none'):
+    def mutate(self, xml_input, strategy=Strategy.NO_STRATEGY):
         self._yields = []
         try:
             self._analyse_(xml_input)

@@ -1,5 +1,5 @@
 import random
-
+from ...strategy import Strategy
 
 class StringMutator:
     def __init__(self):
@@ -77,12 +77,14 @@ class StringMutator:
         mutation_list = []
         if strategy == 'append_large_string':
             return [i + self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
-        if strategy == 'zero':
-            return ['']
-        if strategy == 'max':
+
+        if strategy is Strategy.ZERO:
+            return [""]
+
+        if strategy is Strategy.MAX:
             return [self._adamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadamadam_generator()]
         # byte flipping each char with the other one flipped
-        if strategy == 'byte_flip':
+        if strategy is Strategy.BYTE_FLIP:
             for iterator in range(len(i)):
                 temp = i
                 changed_bit = ~(ord(temp[iterator]))
@@ -91,7 +93,7 @@ class StringMutator:
             return mutation_list
 
         # format string 
-        if strategy == 'format':
+        if strategy is Strategy.FORMAT:
             for iterator in range(len(i)):
                 temp = i
                 changed = temp[:iterator] + '%s%n%s%n%s%n' + temp[iterator + 1:]
@@ -99,7 +101,7 @@ class StringMutator:
             return mutation_list
 
         # non ascii (unicode)
-        if strategy == 'non_ascii':
+        if strategy is Strategy.NON_ASCII:
             for iterator in range(len(i)):
                 temp = i
                 changed = temp[:iterator] + chr(random.randint(0xA1, 0xFF00)) + temp[iterator + 1:]
@@ -107,7 +109,7 @@ class StringMutator:
             return mutation_list
 
         # bitflips
-        if strategy == 'bit_flip':
+        if strategy is Strategy.BIT_FLIP:
             for iterator in range(len(i)):
                 temp = i
                 byte = format(ord(temp[iterator]), 'b')

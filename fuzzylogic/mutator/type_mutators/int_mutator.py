@@ -1,4 +1,5 @@
 import random
+from ...strategy import Strategy
 
 
 class IntMutator:
@@ -29,19 +30,23 @@ class IntMutator:
         i -= random.randint(1, 1000000)
         return i
 
-    @staticmethod
-    def deterministic_mutator(i, strategy):
-        if strategy == "increment":
-            return [i + 1]
-        if strategy == "decrement":
-            return [i - 1]
-        if strategy == "zero":
-            return 0
-        if strategy == "max":
-            return [2 ** 31 - 1]
-        if strategy == "min":
-            return [-(2 ** 31)]
-        if strategy == 'make_zero':
-            return [i - 1, i + 1, 0, 2 ** 31 - 1, 0 - 2 ** 31]
+    def deterministic_mutator(self, i, strategy):
+        if strategy is Strategy.INCREMENT:
+            return [i+1]
+
+        if strategy is Strategy.DECREMENT:
+            return [i-1]
+        
+        if strategy is Strategy.ZERO:
+            return [0]
+
+        if strategy is Strategy.MAX:
+            return [2**31-1]
+        
+        if strategy is Strategy.MIN:
+            return [-(2**31)]
+
+        if strategy == Strategy.MAKE_ZERO:
+            return [i-1, i+1, 0, 2**31-1, 0-2**31]
         else:
             return [i]

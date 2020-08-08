@@ -1,3 +1,5 @@
+from ...strategy import Strategy
+
 class BooleanMutator:
     def __init__(self):
         self.seed = 0
@@ -14,7 +16,7 @@ class BooleanMutator:
         if strategy == "false":
             return [False, 0, '']
 
-        if strategy == 'make_zero':
+        if strategy == Strategy.MAKE_ZERO:
             return [True, False]
         else:
             return [i]

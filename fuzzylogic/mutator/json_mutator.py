@@ -19,12 +19,12 @@ class JsonMutator:
         self._field_type = None  # Dictionary of key:type
         self._static_mutators = {type(None): NullMutator, str: StringMutator(), int: IntMutator(), float: FloatMutator(), bool: BooleanMutator()}
 
-    def mutate(self, json_input, strategy='none'):
+    def mutate(self, json_input, strategy=Strategy.NO_STRATEGY):
         # print('\n\n**********')
         # print('Mutator called with input')
         # print(json_input)
         # print('**********\n\n')
-        if strategy != 'none':  # 'make_zero':
+        if strategy != Strategy.NO_STRATEGY:#Strategy.MAKE_ZERO:
             self._yields = []
             self._strategy = strategy
             self._analyse_(json_input)

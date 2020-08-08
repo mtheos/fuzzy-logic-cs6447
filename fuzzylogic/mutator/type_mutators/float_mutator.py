@@ -1,4 +1,5 @@
 import random
+from ...strategy import Strategy
 
 
 class FloatMutator:
@@ -29,21 +30,20 @@ class FloatMutator:
         f -= random.uniform(1, 1000000)
         return f
 
-    @staticmethod
-    def deterministic_mutator(i, strategy):
-        if strategy == "increment":
-            return [i + 1]
-        if strategy == "decrement":
-            return [i - 1]
-        if strategy == "zero":
+    def deterministic_mutator(self, i, strategy):
+        if strategy is Strategy.INCREMENT:
+            return [i+1]
+        if strategy is Strategy.DECREMENT:
+            return [i-1]
+        if strategy is Strategy.ZERO:
             return [0]
-        if strategy == "min":
+        if strategy is Strategy.MIN:
             return [float("-inf")]
-        if strategy == "max":
+        if strategy is Strategy.MAX:
             return [float("inf")]
-        if strategy == "na":
+        if strategy is Strategy.NAN:
             return [float("NaN")]
-        if strategy == 'make_zero':
-            return [i - 1, i + 1, 0, float('-inf'), float('inf'), float('NaN')]
+        if strategy == Strategy.MAKE_ZERO:
+            return [i-1, i+1, 0, float('-inf'), float('inf'), float('NaN')]
         else:
             return [i]

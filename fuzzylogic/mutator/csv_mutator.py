@@ -5,6 +5,7 @@ from .type_mutators import FloatMutator
 from .type_mutators import StringMutator
 from .type_mutators import CsvRowMutator
 
+from ..strategy import Strategy
 
 class CsvMutator:
     def __init__(self):
@@ -17,7 +18,7 @@ class CsvMutator:
         self._field_type = None  # Dictionary of key:type
 
     # return a generator (i.e. list)
-    def mutate(self, csv_input, strategy='none'):
+    def mutate(self, csv_input, strategy=Strategy.NO_STRATEGY):
         # print('\n\n**********')
         # print('Mutator called with input')
         # print(csv_input)
