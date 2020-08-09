@@ -41,7 +41,7 @@ class XmlMutator:
         except xml.parsers.expat.ExpatError: # parser cannot parse input, ignore this input
             return []
         self._preprocessing_recurse_(self._original)
-        # print(self._original)
+        print(self._original)
         self._strategy = strategy
         # normal mutation
         self.recurse(self._original)
@@ -83,8 +83,8 @@ class XmlMutator:
         - calling the right mutator
     A None mutator **DONE**
         - creates a filled element
-    OrderedDict mutator **DONE**
-    List mutator **DONE**
+    OrderedDict mutator **FIXED**
+    List mutator **TO FIX**
     stategies
         - Add/remove elements functionality
     """
@@ -123,16 +123,14 @@ class XmlMutator:
                     # print('--')
                     self.recurse(v)
                 elif v is None:
-                    # new = OrderedDict()
-                    # new["@sample_att"+str(self._seed)] = "sample_value"
-                    # new["#text"] = "sample_input"
-                    # original[k] = new
+                    original[k] = OrderedDict()
+                    original[k]["@sample_att_"+str(self._seed)] = "sample_value"
+                    original[k]["#text"] = "sample_input"
                     # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
-                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    # original[k] = None
-                    # self._seed += 1
+                    self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    original[k] = None
+                    self._seed += 1
                     # print('--')
-                    pass
                 else: # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
@@ -142,8 +140,6 @@ class XmlMutator:
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = v
                     # print('--')
-                    pass
-            # print('-----------------------------------------')
 
         elif type(original) is list:
             for k in range(len( original)):
@@ -170,15 +166,14 @@ class XmlMutator:
                     #     original[k] = list(v_original)
                     # print('--')
                     self.recurse(v)
-                elif type(v) is None:
-                    # new = OrderedDict()
-                    # new["@sample_att"+str(self._seed)] = "sample_value"
-                    # new["#text"] = "sample_input"
-                    # original[k] = new
-                    # print("new Elem:"+xmltodict.unparse(self._original, full_document=False))
-                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    # original[k] = None
-                    # self._seed += 1
+                elif v is None:
+                    original[k] = OrderedDict()
+                    original[k]["@sample_att_"+str(self._seed)] = "sample_value"
+                    original[k]["#text"] = "sample_value"
+                    # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
+                    self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    original[k] = None
+                    self._seed += 1
                     # print('--')
                     pass
             

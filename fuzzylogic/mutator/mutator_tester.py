@@ -113,12 +113,14 @@ original = """
         <many new="wow">elements</many>
         <many>55.55</many>
         <many>69</many>
+        <many></many>
       </and>
       <plus a="complex">
         element as well
       </plus>
       <lol id="lol"></lol>
       <yay>False</yay>
+      <empty></empty>
     </mydocument>
     """
 
