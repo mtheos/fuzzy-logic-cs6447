@@ -84,8 +84,8 @@ class XmlMutator:
     A None mutator **DONE**
         - creates a filled element
     OrderedDict mutator **FIXED**
-    List mutator **TO FIX**
-    stategies
+    List mutator **FIXED**
+    stategies **DONE**
         - Add/remove elements functionality
     """
     def recurse(self, original):
@@ -98,17 +98,12 @@ class XmlMutator:
             #         del original["tag"+str(i)]
             
             for k,v in original.items():
-                # print ("                   k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
-                    # original[k] = OrderedDict()
-                    # original[k]["GGGGGGGG"] = "GGGGGGGG"
-                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    # original[k] = v
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
                         # print(f"*********Dict mutation on {k}:\n++++++"+xmltodict.unparse(self._original, full_document=False))
-                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         # print(mutation,'\n')
+                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = v
                     self.recurse(v)
                 elif type(v) is list:
@@ -118,58 +113,47 @@ class XmlMutator:
                         # print(mutation)
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = v
-                    # print('----------------------')
                     self.recurse(v)
                 elif v is None:
                     original[k] = self._get_sample_element()
                     # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
-                    # self._seed += 1
-                    # print('--')
                 else: # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
                     mutation = self._mutators[v_type].mutate(typed_v)
                     original[k] = str(mutation)
                     # print(f"type {v_type} mutation on '{v}': "+ xmltodict.unparse(self._original, full_document=False))
+                    # print(mutation)
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = v
-                    # print('--')
 
         elif type(original) is list:
             for k in range(len( original)):
                 v = original[k]
                 if type(v) is OrderedDict:
-                    # original[k] = OrderedDict()
-                    # original[k]["GGGGGGGG"] = "GGGGGGGG"
-                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    # original[k] = v
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
                         # print(f"*********Dict mutation on {k}:\n++++++"+xmltodict.unparse(self._original, full_document=False))
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         # print(mutation)
-                        # v = OrderedDict(v_original)
                         original[k] = v
                     self.recurse(v)
                 elif type(v) is list:
-                    # v_original = list(v)
-                    # for mutation in self._mutate_list(list(v)):
-                    #     original[k] = list(mutation)
-                    #     print(f"List mutation on {v_original}:\n++"+xmltodict.unparse(self._original, full_document=False))
-                    #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    #     original[k] = list(v_original)
-                    # print('--')
+                    for mutation in self._mutate_list(list(v)):
+                        original[k] = list(mutation)
+                        # print(f"List mutation on {v}:\n++"+xmltodict.unparse(self._original, full_document=False))
+                        # print(mutation)
+                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                        original[k] = v
                     self.recurse(v)
                 elif v is None:
                     original[k] = self._get_sample_element()
                     # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
-                    # self._seed += 1
-                    # print('--')
-                    pass
+                    
             
     
     """
@@ -195,7 +179,6 @@ class XmlMutator:
         elem_att = [key for key in v.keys() if key[0] == '@']
         if len(elem_att) > 0:
             random_key = random.choice(elem_att)
-            # print("AHHHHHHHHHHHHHHHHH RANDOM key: ",random_key)
             del v[random_key]
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
@@ -227,7 +210,6 @@ class XmlMutator:
         elem_list = [key for key in v.keys() if key[0] != '@' and key[0] != '#']
         if len(elem_list) > 0:
             random_key = random.choice(elem_list)
-            # print("AHHHHHHHHHHHHHHHHH RANDOM key: ",random_key)
             del v[random_key]
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
@@ -268,15 +250,15 @@ class XmlMutator:
         #     mutations.append(list(v))
         #     v = list(original)
         
-        # self._seed += 1
         return mutations
 
     def _get_sample_element(self):
         new = OrderedDict()
         string = "sample_attr"
+        
         for i in range(15):
             string = self._mutators[str].mutate(string)
-        # print(string)
+        
         new["@sample_attr_"+str(self._seed)] = string
         new["#text"] = string
         self._seed += 1
