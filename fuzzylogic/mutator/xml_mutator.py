@@ -1,23 +1,21 @@
-import random
 import xml
-# import json
-# import xml.etree.ElementTree as ET
+import random
 import xmltodict
-from collections import OrderedDict
-from .int_mutator import IntMutator
-from .float_mutator import FloatMutator
-from .string_mutator import StringMutator
-from .boolean_mutator import BooleanMutator
-from .complex_mutators import ListMutator, ObjectMutator
 from ..strategy import Strategy
+from collections import OrderedDict
+from .type_mutators import IntMutator
+from .type_mutators import FloatMutator
+from .type_mutators import StringMutator
+from .type_mutators import BooleanMutator
+
 
 class XmlMutator:
     def __init__(self):
         self._seed = 0
         self._original = None   # xml tree
-        self._yields = []       # yileds to yield
+        self._yields = []       # yields to yield
         self._strategy = None   # strat
-        self._mutators = {str:StringMutator(),int:IntMutator(),float:FloatMutator(),bool:BooleanMutator()}
+        self._mutators = {str: StringMutator(), int: IntMutator(), float: FloatMutator(), bool: BooleanMutator()}
 
     """
     Go through each node and mutate it...
@@ -38,29 +36,31 @@ class XmlMutator:
         self._yields = []
         try:
             self._analyse_(xml_input)
-        except xml.parsers.expat.ExpatError: # parser cannot parse input, ignore this input
+        except xml.parsers.expat.ExpatError:  # parser cannot parse input, ignore this input
             return []
         self._preprocessing_recurse_(self._original)
         # print(self._original)
         self._strategy = strategy
         self.recurse(self._original)
+        # print("\n".join(self._yields))
         for y in self._yields:
-            # print(y)
-            yield y
+            if y[-1] != '\n':
+                y += '\n'
+                yield y
         # return self._yields
 
     """
     Parses string input
     """
     def _analyse_(self, _input):
-        self._original = xmltodict.parse(_input,process_namespaces=True)
+        self._original = xmltodict.parse(_input, process_namespaces=True)
     
     """
     Some preprocessing to make adding/removing attributes/text easier
     """
     def _preprocessing_recurse_(self, original):
         if type(original) is OrderedDict:
-            for k,v in original.items():
+            for k, v in original.items():
                 if type(v) is str and (k[0] != '@' and k[0] != '#'):
                     original[k] = OrderedDict()
                     original[k]["#text"] = v
@@ -98,7 +98,7 @@ class XmlMutator:
             #     for i in range(Strategy.members_to_add_to_dict):
             #         del original["tag"+str(i)]
             
-            for k,v in original.items():
+            for k, v in original.items():
                 if type(v) is OrderedDict:
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
@@ -153,9 +153,7 @@ class XmlMutator:
                     # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
-                    
-            
-    
+
     """
     Performs each of these mutations on the ordred dict
     and returns an array of these mutations:
@@ -169,14 +167,14 @@ class XmlMutator:
     def _mutate_ordered_dict(self, v):
         mutations = []
         original = OrderedDict(v)
-        
+
         # add attribute
-        for i in range(random.randint(1,15)):
-            v["@new_att_"+str(self._seed)] = "new_att_value_"+str(self._seed)
+        for i in range(random.randint(1, 15)):
+            v['@new_att_'+str(self._seed)] = 'new_att_value_'+str(self._seed)
             self._seed += 1
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
-        
+
         # remove random attribute
         elem_att = [key for key in v.keys() if key[0] == '@']
         if len(elem_att) > 0:
@@ -190,15 +188,15 @@ class XmlMutator:
         #     del v[key]
         #     mutations.append(OrderedDict(v))
         #     v = OrderedDict(original)
-        
+
         # add text
         if '#text' not in v.keys():
-            string = "sample_attr"
+            string = 'sample_attr'
             v['#text'] = self._fat_type_mutation_(self._mutators[str],string)
-            
+
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
-        
+
         # remove text
         if '#text' in v.keys():
             del v['#text']
@@ -206,12 +204,12 @@ class XmlMutator:
             v = OrderedDict(original)
         
         # add element FOR THE MEMES
-        for i in range(random.randint(1,200)):
-            v["new_element_"+str(self._seed)] = self._get_sample_element_()
+        for i in range(random.randint(1, 200)):
+            v['new_element_'+str(self._seed)] = self._get_sample_element_()
             self._seed += 1
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
-        
+
         # remove random element
         elem_list = [key for key in v.keys() if key[0] != '@' and key[0] != '#']
         # for i in range(random.randint(0,int(len(elem_list)/2))):
@@ -269,13 +267,13 @@ class XmlMutator:
 
     def _get_sample_element_(self):
         new = OrderedDict()
-        string = "sample_attr"
+        string = 'sample_attr'
         
-        new["@sample_attr_"+str(self._seed)] = string
-        new["#text"] = self._fat_type_mutation_(self._mutators[str],string)
+        new['@sample_attr_'+str(self._seed)] = string
+        new['#text'] = self._fat_type_mutation_(self._mutators[str],string)
         self._seed += 1
         return new
-    
+
     def _get_type_(self, v):
         if self._is_int_(v):
             return int
@@ -283,7 +281,7 @@ class XmlMutator:
             return float
         elif self._is_str_(v):
             return str
-        elif self._is_None_(v):
+        elif self._is_none_(v):
             return None
         raise TypeError(f'*** {v} is an unhandled type ***')
 
@@ -312,12 +310,11 @@ class XmlMutator:
             raise Exception('Can you imagine something that will fail this?')
 
     @staticmethod
-    def _is_None_(v):
+    def _is_none_(v):
         if v is None:
             return True
         return False
     
     @staticmethod
     def empty():
-        return "<html></html>"
-
+        return '<html></html>\n'
