@@ -133,16 +133,19 @@ test = """
     </and>
     """
 
-xml_dict = xmltodict.parse(original)
+# xml_dict = xmltodict.parse(original)
 
+for i in range(200):
+    mut.mutate(original)
 
-print("\n".join(mut.mutate(original)))
+# rand_index = random.choice(range(5))
+# print(rand_index)
 # mut.mutate(original)
 
-dictyy = OrderedDict()
-dictyy["lol"] = 1
-dictyy["@atty"] = 2 
-dictyy["#text"] = 3 
+# dictyy = OrderedDict()
+# dictyy["lol"] = 1
+# dictyy["@atty"] = 2 
+# dictyy["#text"] = 3 
 
 # print(dictyy.items())
 
@@ -156,14 +159,14 @@ dictyy["#text"] = 3
 # print(mut._mutate_ordered_dict(xml_dict))
 # print(mut._mutate_list(listy))
 
-dicty = {
-    "lol": { 
-        "atty": 3,
-        "atty2": 4,
-        "lol2": 2,
-        "text": 2,
-    },
-}
+# dicty = {
+#     "lol": { 
+#         "atty": 3,
+#         "atty2": 4,
+#         "lol2": 2,
+#         "text": 2,
+#     },
+# }
 
 def recurse(item):
     if type(item) is dict:
