@@ -128,4 +128,4 @@ class CsvMutator:
 
     @staticmethod
     def empty():
-        return ''
+        return '\n'

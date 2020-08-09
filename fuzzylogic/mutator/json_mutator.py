@@ -29,6 +29,8 @@ class JsonMutator:
             self._analyse_(json_input)
             self.recurse(self._original)
             for y in self._yields:
+                if y[-1] != '\n':
+                    y += '\n'
                 yield y
         else:
             self._strategy = ''
@@ -38,6 +40,8 @@ class JsonMutator:
                 output = dict(self._original)
                 output = self._mutate_(output, key)
                 output = json.dumps(output)
+                if output[-1] != '\n':
+                    output += '\n'
                 yield output
 
     def recurse(self, original):
