@@ -43,9 +43,7 @@ class XmlMutator:
         self._preprocessing_recurse_(self._original)
         # print(self._original)
         self._strategy = strategy
-        # normal mutation
         self.recurse(self._original)
-        # print("\n".join(self._yields))
         return self._yields
 
     """
@@ -122,7 +120,9 @@ class XmlMutator:
                 else: # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
-                    mutation = self._mutators[v_type].mutate(typed_v)
+                    mutation = typed_v
+                    for i in range(random.randint(1, 15)):
+                        mutation = self._mutators[v_type].mutate(mutation)
                     original[k] = str(mutation)
                     # print(f"type {v_type} mutation on '{v}': "+ xmltodict.unparse(self._original, full_document=False))
                     # print(mutation)
@@ -171,7 +171,9 @@ class XmlMutator:
         original = OrderedDict(v)
         
         # add attribute
-        v["@new_att_"+str(self._seed)] = "new_att_value_"+str(self._seed)
+        for i in range(random.choice([1, 5, 15, 30])):
+            v["@new_att_"+str(self._seed)] = "new_att_value_"+str(self._seed)
+            self._seed += 1
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
         
@@ -191,7 +193,10 @@ class XmlMutator:
         
         # add text
         if '#text' not in v.keys():
-            v['#text'] = 'new_text_'+str(self._seed)
+            string = "sample_attr"
+            for i in range(15):
+                string = self._mutators[str].mutate(string)
+            v['#text'] = string
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
         
@@ -201,13 +206,17 @@ class XmlMutator:
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
         
-        # add element
-        v["new_element_"+str(self._seed)] = self._get_sample_element()
+        # add element FOR THE MEMES
+        for i in range(random.choice([5,50,150])):
+            v["new_element_"+str(self._seed)] = self._get_sample_element()
+            self._seed += 1
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
         
         # remove random element
         elem_list = [key for key in v.keys() if key[0] != '@' and key[0] != '#']
+        # for i in range(random.randint(0,int(len(elem_list)/2))):
+        # for i in range(random.randint(0,int(len(elem_list)/2))):
         if len(elem_list) > 0:
             random_key = random.choice(elem_list)
             del v[random_key]
@@ -233,12 +242,14 @@ class XmlMutator:
         mutations = []
         original = list(v)
 
-        # added sample element
-        v.append(self._get_sample_element())
+        # added fat amount of sample element
+        for i in range(random.choice([5,50,150])):
+            v.append(self._get_sample_element())
         mutations.append(list(v))
         v = list(original)
 
         # remove random element
+        # for i in range(random.randint(0,int(len(v)/2))):
         rand_index = random.choice(range(len(v)))
         del v[rand_index]
         mutations.append(list(v))
@@ -256,7 +267,7 @@ class XmlMutator:
         new = OrderedDict()
         string = "sample_attr"
         
-        for i in range(15):
+        for i in range(3):
             string = self._mutators[str].mutate(string)
         
         new["@sample_attr_"+str(self._seed)] = string
