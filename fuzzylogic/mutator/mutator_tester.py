@@ -137,6 +137,9 @@ xml_dict = xmltodict.parse(original)
 
 
 print("\n".join(mut.mutate(original)))
+
+# rand_index = random.choice(range(5))
+# print(rand_index)
 # mut.mutate(original)
 
 dictyy = OrderedDict()
