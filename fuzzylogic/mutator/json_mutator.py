@@ -1,26 +1,29 @@
 import json
-from .int_mutator import IntMutator
-from .float_mutator import FloatMutator
-from .string_mutator import StringMutator
-from .boolean_mutator import BooleanMutator
-from .complex_mutators import ListMutator, ObjectMutator
 from ..strategy import Strategy
+from .type_mutators import IntMutator
+from .type_mutators import FloatMutator
+from .type_mutators import StringMutator
+from .type_mutators import BooleanMutator
+from .type_mutators import ListMutator, ObjectMutator
+
 
 class JsonMutator:
     def __init__(self):
         self._seed = 0
         self._mutators = {}
-        self._original = None    # Dictionary of json
+        self._yields = None
+        self._strategy = None
         self._keys = None        # List of keys in json
+        self._original = None    # Dictionary of json
         self._field_type = None  # Dictionary of key:type
-        self._static_mutators={str:StringMutator(),int:IntMutator(),float:FloatMutator(),bool:BooleanMutator()}
+        self._static_mutators = {str: StringMutator(), int: IntMutator(), float: FloatMutator(), bool: BooleanMutator()}
 
     def mutate(self, json_input, strategy='none'):
         # print('\n\n**********')
         # print('Mutator called with input')
         # print(json_input)
         # print('**********\n\n')
-        if strategy != 'none':#'make_zero':
+        if strategy != 'none':  # 'make_zero':
             self._yields = []
             self._strategy = strategy
             self._analyse_(json_input)
@@ -38,15 +41,15 @@ class JsonMutator:
                 yield output
 
     def recurse(self, original):
-        #big TODO for andrew: make this also insert shit into dicts and lists
+        # big TODO for andrew: make this also insert shit into dicts and lists
         if type(original) is dict:
-            if (self._strategy == Strategy.ADD_DICTS):
-                for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
+            if self._strategy == Strategy.ADD_DICTS:
+                for i in range(Strategy.members_to_add_to_dict): # who cares if we overwrite existing shit
                     original["additional_meme"+str(i)] = "some nice cool sample meme"
                 self._yields.append(json.dumps(self._original))
                 for i in range(Strategy.members_to_add_to_dict):
                     del original["additional_meme"+str(i)]
-            for k,v in original.items():
+            for k, v in original.items():
                 if type(v) is dict:
                     self.recurse(v)
                 elif type(v) is list:
@@ -72,7 +75,6 @@ class JsonMutator:
                         original[k] = mutation
                         self._yields.append(json.dumps(self._original))
                         original[k] = tmp
-    
 
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)
@@ -116,5 +118,6 @@ class JsonMutator:
                 raise TypeError(f'*** {key} has an unknown type ***')
         return self._mutators[self._field_type[key]]
 
-    def empty(self):
-        return json.dumps(json.loads("{}"))  # i think this is right? this gets plugged into a mutator
+    @staticmethod
+    def empty():
+        return '{}\n'

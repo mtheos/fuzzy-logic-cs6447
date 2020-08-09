@@ -1,21 +1,18 @@
 import re
+from .type_mutators import IntMutator
+from .type_mutators import FloatMutator
+from .type_mutators import StringMutator
 
-from .int_mutator import IntMutator
-from .float_mutator import FloatMutator
-from .string_mutator import StringMutator
-from .boolean_mutator import BooleanMutator
-from .complex_mutators import ListMutator, ObjectMutator
 
 class PlainTextMutator:
     def __init__(self):
         self._seed = 0
-        self._original = None
-        self._mutators = {str:StringMutator(), int:IntMutator(), float:FloatMutator()}
         self.yields = None
+        self._original = None
+        self._mutators = {str: StringMutator(), int: IntMutator(), float: FloatMutator()}
     
     def mutate(self, _input, strategy='none'):
         self._analyse_(_input)
-
         self.yields = []
         mutated_split = []
         crazy = []
@@ -42,20 +39,19 @@ class PlainTextMutator:
 
         return self.yields
 
-
     def _analyse_(self, _input):
         """
         Given plaintext input, break up the input into its respective types
         """
-        nums = re.findall(r'-?\d+\.?\d*',_input)
+        nums = re.findall(r'-?\d+\.?\d*', _input)
         nums = [self._get_type_(x)(x) for x in nums]
 
         self._original = []
         for num in nums:
             self._original.append(_input[:_input.index(str(num))])
             self._original.append(num)
-            min = _input.index(str(num)) + len(str(num))
-            _input = _input[min:]
+            n_min = _input.index(str(num)) + len(str(num))
+            _input = _input[n_min:]
         self._original.append(_input)
         self._original = list(filter(None, self._original))
         return self._original
@@ -68,7 +64,7 @@ class PlainTextMutator:
         elif self._is_str_(v):
             return str
         raise TypeError(f'*** {v} is an unhandled type ***')
-    
+
     @staticmethod
     def _is_float_(v):
         try:
@@ -88,7 +84,12 @@ class PlainTextMutator:
     @staticmethod
     def _is_str_(v):
         try:
-            str(v)
-            return True
+            raise ValueError('This error is in _is_str_ in csv mutator')
+            # OK, now that I have your attention. This function won't work
+            # Almost anything can be represented as a string, the str function
+            # will only fail if your input has non printable bytes \x00 \x01 etc
+            # You need to assume str if your other checks all fail
+            # str(v)
+            # return True
         except ValueError:
             return False

@@ -13,12 +13,14 @@ import xml.etree.ElementTree as ET
 import xmltodict
 from collections import OrderedDict
 
+
 def _get_type_(v):
     if _is_int_(v):
         return int
     elif _is_float_(v):
         return float
     raise TypeError(f'*** {v} is an unhandled type ***')
+
 
 def _is_float_(v):
     try:
@@ -27,49 +29,13 @@ def _is_float_(v):
     except ValueError:
         return False
 
+
 def _is_int_(v):
     try:
         int(v)
         return True
     except ValueError:
         return False
-
-# def _get_type_(v):
-#     if _is_int_(v):
-#         return int
-#     elif _is_float_(v):
-#         return float
-#     elif _is_str_(v):
-#         return str
-#     raise TypeError(f'*** {v} is an unhandled type ***')
-
-# def _is_float_(v):
-#     try:
-#         float(v)
-#         return True
-#     except ValueError:
-#         return False
-
-# def _is_int_(v):
-#     try:
-#         int(v)
-#         return True
-#     except ValueError:
-#         return False
-
-# def _is_str_(v):
-#     try:
-#         str(v)
-#         return True
-#     except ValueError:
-#         raise Exception('Can you imagine something that will fail this?')
-
-# from .int_mutator import IntMutator
-# from .float_mutator import FloatMutator
-# from .string_mutator import StringMutator
-# from .boolean_mutator import BooleanMutator
-# from .csv_row_mutator import CsvRowMutator
-# from .complex_mutators import ListMutator, ObjectMutator
 
 
 mut = XmlMutator()

@@ -1,9 +1,9 @@
 import csv
 from io import StringIO
-from .int_mutator import IntMutator
-from .float_mutator import FloatMutator
-from .string_mutator import StringMutator
-from .csv_row_mutator import CsvRowMutator
+from .type_mutators import IntMutator
+from .type_mutators import FloatMutator
+from .type_mutators import StringMutator
+from .type_mutators import CsvRowMutator
 
 
 class CsvMutator:
@@ -126,5 +126,6 @@ class CsvMutator:
                 raise TypeError(f'*** {key} has an unknown type ***')
         return self._mutators[self._field_type[key]]
 
-    def empty(self):
-        return ""
+    @staticmethod
+    def empty():
+        return ''
