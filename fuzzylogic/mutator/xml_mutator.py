@@ -77,15 +77,15 @@ class XmlMutator:
                     self._preprocessing_recurse_(v)
         
     """
-    TODO
-    individual types: **DONE**
+    Recurse through the xml and mutate the following:
+     * individual types:
         - finding the type
         - calling the right mutator
-    A None mutator **DONE**
+     * A None mutator
         - creates a filled element
-    OrderedDict mutator **FIXED**
-    List mutator **FIXED**
-    stategies **DONE**
+     * OrderedDict mutator
+     * List mutator
+     * stategies:
         - Add/remove elements functionality
     """
     def recurse(self, original):
@@ -136,8 +136,8 @@ class XmlMutator:
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
                         # print(f"*********Dict mutation on {k}:\n++++++"+xmltodict.unparse(self._original, full_document=False))
-                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         # print(mutation)
+                        self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = v
                     self.recurse(v)
                 elif type(v) is list:
