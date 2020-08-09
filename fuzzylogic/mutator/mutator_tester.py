@@ -120,18 +120,18 @@ original = """
       </plus>
       <lol id="lol"></lol>
       <yay>False</yay>
-      <empty></empty>
+      <empty>helloo</empty>
     </mydocument>
     """
 
 
-test = """
-    <and>
-        <many new="wow">elements</many>
-        <many>55.55</many>
-        <many>69</many>
-    </and>
-    """
+# test = """
+#     <and>
+#         <many new="wow">elements</many>
+#         <many>55.55</many>
+#         <many>69</many>
+#     </and>
+#     """
 
 # xml_dict = xmltodict.parse(original)
 
@@ -196,8 +196,8 @@ def split_string_by_types(string):
     for num in nums:
         str_broken.append(string[:string.index(str(num))])
         str_broken.append(num)
-        min = string.index(str(num)) + len(str(num))
-        string = string[min:]
+        minimum = string.index(str(num)) + len(str(num))
+        string = string[minimum:]
         # print(num)
         # str_broken.append()
         # print(str_broken)

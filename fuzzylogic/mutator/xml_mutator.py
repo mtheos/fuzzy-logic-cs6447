@@ -44,7 +44,10 @@ class XmlMutator:
         # print(self._original)
         self._strategy = strategy
         self.recurse(self._original)
-        return self._yields
+        for y in self._yields:
+            # print(y)
+            yield y
+        # return self._yields
 
     """
     Parses string input
@@ -88,12 +91,12 @@ class XmlMutator:
     """
     def recurse(self, original):
         if type(original) is OrderedDict:
-            if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
-                for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
-                    original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
-                self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                for i in range(Strategy.members_to_add_to_dict):
-                    del original["tag"+str(i)]
+            # if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
+            #     for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
+            #         original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
+            #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
+            #     for i in range(Strategy.members_to_add_to_dict):
+            #         del original["tag"+str(i)]
             
             for k,v in original.items():
                 if type(v) is OrderedDict:
@@ -113,24 +116,21 @@ class XmlMutator:
                         original[k] = v
                     self.recurse(v)
                 elif v is None:
-                    original[k] = self._get_sample_element()
+                    original[k] = self._get_sample_element_()
                     # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
                 else: # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
-                    mutation = typed_v
-                    for i in range(random.randint(1, 15)):
-                        mutation = self._mutators[v_type].mutate(mutation)
-                    original[k] = str(mutation)
+                    original[k] = str(self._fat_type_mutation_(self._mutators[v_type],typed_v))
                     # print(f"type {v_type} mutation on '{v}': "+ xmltodict.unparse(self._original, full_document=False))
                     # print(mutation)
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = v
 
         elif type(original) is list:
-            for k in range(len( original)):
+            for k in range(len(original)):
                 v = original[k]
                 if type(v) is OrderedDict:
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
@@ -149,7 +149,7 @@ class XmlMutator:
                         original[k] = v
                     self.recurse(v)
                 elif v is None:
-                    original[k] = self._get_sample_element()
+                    original[k] = self._get_sample_element_()
                     # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
@@ -171,7 +171,7 @@ class XmlMutator:
         original = OrderedDict(v)
         
         # add attribute
-        for i in range(random.choice([1, 5, 15, 30])):
+        for i in range(random.randint(1,15)):
             v["@new_att_"+str(self._seed)] = "new_att_value_"+str(self._seed)
             self._seed += 1
         mutations.append(OrderedDict(v))
@@ -194,9 +194,8 @@ class XmlMutator:
         # add text
         if '#text' not in v.keys():
             string = "sample_attr"
-            for i in range(15):
-                string = self._mutators[str].mutate(string)
-            v['#text'] = string
+            v['#text'] = self._fat_type_mutation_(self._mutators[str],string)
+            
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
         
@@ -207,15 +206,14 @@ class XmlMutator:
             v = OrderedDict(original)
         
         # add element FOR THE MEMES
-        for i in range(random.choice([5,50,150])):
-            v["new_element_"+str(self._seed)] = self._get_sample_element()
+        for i in range(random.randint(1,200)):
+            v["new_element_"+str(self._seed)] = self._get_sample_element_()
             self._seed += 1
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
         
         # remove random element
         elem_list = [key for key in v.keys() if key[0] != '@' and key[0] != '#']
-        # for i in range(random.randint(0,int(len(elem_list)/2))):
         # for i in range(random.randint(0,int(len(elem_list)/2))):
         if len(elem_list) > 0:
             random_key = random.choice(elem_list)
@@ -243,8 +241,8 @@ class XmlMutator:
         original = list(v)
 
         # added fat amount of sample element
-        for i in range(random.choice([5,50,150])):
-            v.append(self._get_sample_element())
+        for i in range(random.randint(1,200)):
+            v.append(self._get_sample_element_())
         mutations.append(list(v))
         v = list(original)
 
@@ -263,15 +261,18 @@ class XmlMutator:
         
         return mutations
 
-    def _get_sample_element(self):
+    @staticmethod
+    def _fat_type_mutation_(mutator, elem):
+        for i in range(random.randint(1,5)):
+            elem = mutator.mutate(elem)
+        return elem
+
+    def _get_sample_element_(self):
         new = OrderedDict()
         string = "sample_attr"
         
-        for i in range(3):
-            string = self._mutators[str].mutate(string)
-        
         new["@sample_attr_"+str(self._seed)] = string
-        new["#text"] = string
+        new["#text"] = self._fat_type_mutation_(self._mutators[str],string)
         self._seed += 1
         return new
     
@@ -316,6 +317,7 @@ class XmlMutator:
             return True
         return False
     
-    def empty(self):
+    @staticmethod
+    def empty():
         return "<html></html>"
 
