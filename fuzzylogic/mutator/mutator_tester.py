@@ -123,23 +123,61 @@ original = """
     """
 
 
-# print(type(None))
+test = """
+    <and>
+        <many new="wow">elements</many>
+        <many>55.55</many>
+        <many>69</many>
+    </and>
+    """
+
+xml_dict = xmltodict.parse(original)
+
+
+print("\n".join(mut.mutate(original)))
 # mut.mutate(original)
 
 dictyy = OrderedDict()
 dictyy["lol"] = 1
 dictyy["@atty"] = 2 
 dictyy["#text"] = 3 
+
+# print(dictyy.items())
+
+# dictyy2 = OrderedDict()
+# dictyy2["wow"] = 15
+# dictyy2["@onettty"] = 22 
+# dictyy2["#text"] = 33 
+
+# listy = [dictyy, dictyy2]
 # print("\n".join(mut._mutate_ordered_dict(dictyy)))
-# print(mut._mutate_ordered_dict(dictyy))
+# print(mut._mutate_ordered_dict(xml_dict))
+# print(mut._mutate_list(listy))
 
 dicty = {
-    "lol": 2,
-    "@atty": 3,
-    "@atty2": 4,
-    "lol2": 2,
-    "#text": 2,
+    "lol": { 
+        "atty": 3,
+        "atty2": 4,
+        "lol2": 2,
+        "text": 2,
+    },
 }
+
+def recurse(item):
+    if type(item) is dict:
+        for k,v in item.items():
+            print('k = ', k, ' v = ', v)
+            # og_v = dict(v)
+            item[k] = 'whack'
+            print(dicty)
+            item[k] = v
+            recurse(v)
+    else:
+        print('item = ', item)
+
+# recurse(dicty)
+        
+
 
 string ='hell1123 wow 32yes, how is lif3 so do32.22'
 
@@ -163,7 +201,9 @@ def split_string_by_types(string):
     return str_broken
 # print("\n".join(ints))
 
-print(split_string_by_types(string))
+# print(split_string_by_types(string))
+
+# listy = [1,2,3,4,5]
 
 # print("\n".join([x for x in dicty.keys() if x[0] == '@']))
 # print("\n".join([x for x in dicty.keys() if x[0] != '@' and x[0] != '#']))

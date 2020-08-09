@@ -41,6 +41,7 @@ class XmlMutator:
         except xml.parsers.expat.ExpatError: # parser cannot parse input, ignore this input
             return []
         self._preprocessing_recurse_(self._original)
+        # print(self._original)
         self._strategy = strategy
         # normal mutation
         self.recurse(self._original)
@@ -59,6 +60,9 @@ class XmlMutator:
     def _preprocessing_recurse_(self, original):
         if type(original) is OrderedDict:
             for k,v in original.items():
+                if type(v) is str and (k[0] != '@' and k[0] != '#'):
+                    original[k] = OrderedDict()
+                    original[k]["#text"] = v
                 self._preprocessing_recurse_(v)
                 
         elif type(original) is list:
@@ -77,87 +81,114 @@ class XmlMutator:
     individual types: **DONE**
         - finding the type
         - calling the right mutator
-    A None mutator
+    A None mutator **DONE**
         - creates a filled element
     OrderedDict mutator **DONE**
-    List mutator 
+    List mutator **DONE**
     stategies
         - Add/remove elements functionality
     """
     def recurse(self, original):
         if type(original) is OrderedDict:
-            if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
-                for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
-                    original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
-                self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                for i in range(Strategy.members_to_add_to_dict):
-                    del original["tag"+str(i)]
+            # if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
+            #     for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
+            #         original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
+            #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
+            #     for i in range(Strategy.members_to_add_to_dict):
+            #         del original["tag"+str(i)]
             
             for k,v in original.items():
-                # print ("k = ", k, " v = ", v)
+                print ("                   k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
-                    v_original = OrderedDict(v)
+                    # original[k] = OrderedDict()
+                    # original[k]["GGGGGGGG"] = "GGGGGGGG"
+                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    # original[k] = v
+                    # v_original = OrderedDict(v)
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
+                        # print(f"*********Dict mutation on {k}:\n++++++"+xmltodict.unparse(self._original, full_document=False))
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                        original[k] = OrderedDict(v_original)
+                        # print(mutation,'\n')
+                        # v = OrderedDict(v_original)
+                        original[k] = v
                     self.recurse(v)
                 elif type(v) is list:
-                    """
-                    TODO:
-                        1. Add new fucky element
-                        2. Remove Element
-                    """
+                    # v_original = list(v)
+                    # for mutation in self._mutate_list(list(v)):
+                    #     original[k] = list(mutation)
+                    #     print(f"List mutation on {v_original}:\n++"+xmltodict.unparse(self._original, full_document=False))
+                    #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    #     original[k] = list(v_original)
+                    # print('--')
                     self.recurse(v)
                 elif v is None:
-                    """
-                    TODO: Create new fucky element
-                    """
-                    continue
-                else:
+                    # new = OrderedDict()
+                    # new["@sample_att"+str(self._seed)] = "sample_value"
+                    # new["#text"] = "sample_input"
+                    # original[k] = new
+                    # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
+                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    # original[k] = None
+                    # self._seed += 1
+                    # print('--')
+                    pass
+                else: # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
                     mutation = self._mutators[v_type].mutate(typed_v)
-                    tmp = typed_v
-                    # print(self._mutators[v_type], mutation)
                     original[k] = str(mutation)
+                    print(f"type {v_type} mutation on '{v}': "+ xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    original[k] = str(tmp)
-                # else:
-                #     if self._strategy != None:
-                #         for mutation in self._static_mutators[type(v)].deterministic_mutator(v, self._strategy):
-                #             tmp = v
-                #             original[k] = mutation
-                #             self._yields.append(json.dumps(self._original))
-                #             original[k] = tmp
+                    original[k] = v
+                    # print('--')
+                    pass
+            # print('-----------------------------------------')
 
         elif type(original) is list:
             for k in range(len( original)):
                 v = original[k]
                 if type(v) is OrderedDict:
-                    v_original = OrderedDict(v)
+                    # original[k] = OrderedDict()
+                    # original[k]["GGGGGGGG"] = "GGGGGGGG"
+                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    # original[k] = v
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
+                        # print(f"*********Dict mutation on {k}:\n++++++"+xmltodict.unparse(self._original, full_document=False))
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                        original[k] = OrderedDict(v_original)
+                        # print(mutation)
+                        # v = OrderedDict(v_original)
+                        original[k] = v
                     self.recurse(v)
                 elif type(v) is list:
-                    """
-                    TODO:
-                        1. Add new fucky element
-                        2. Remove Element
-                    """
+                    # v_original = list(v)
+                    # for mutation in self._mutate_list(list(v)):
+                    #     original[k] = list(mutation)
+                    #     print(f"List mutation on {v_original}:\n++"+xmltodict.unparse(self._original, full_document=False))
+                    #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    #     original[k] = list(v_original)
+                    # print('--')
                     self.recurse(v)
                 elif type(v) is None:
-                    #TODO
+                    # new = OrderedDict()
+                    # new["@sample_att"+str(self._seed)] = "sample_value"
+                    # new["#text"] = "sample_input"
+                    # original[k] = new
+                    # print("new Elem:"+xmltodict.unparse(self._original, full_document=False))
+                    # self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    # original[k] = None
+                    # self._seed += 1
+                    # print('--')
                     pass
+            
     
     """
     Performs each of these mutations on the ordred dict
     and returns an array of these mutations:
         1. Add attribute
-        2. Add text (if doesn't exist)
-        3. Remove attribute
+        2. Remove attribute
+        3. Add text (if doesn't exist)
         4. Remove text
         5. Add element
         6. Remove Element
@@ -167,7 +198,7 @@ class XmlMutator:
         original = OrderedDict(v)
         
         # add attribute
-        v["@_new_att_"+str(self._seed)] = "new_att_value_"+str(self._seed)
+        v["@new_att_"+str(self._seed)] = "new_att_value_"+str(self._seed)
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
         
@@ -190,7 +221,10 @@ class XmlMutator:
             v = OrderedDict(original)
         
         # add element TODO add random shit to element?
-        v["_new_element_"+str(self._seed)] = OrderedDict()
+        new = OrderedDict()
+        new["@sample_att"+str(self._seed)] = "sample_value"
+        new["#text"] = "sample_input"
+        v["new_element_"+str(self._seed)] = new
         mutations.append(OrderedDict(v))
         v = OrderedDict(original)
         
@@ -204,12 +238,33 @@ class XmlMutator:
         return mutations
 
     """
-    TODO:
-        1. Add new fucky element
+    Performs each of these mutations on the list of OrderedDicts
+    and returns an array of these mutations:
+        1. Add new sample element (OrderedDict)
         2. Remove Element
     """
     def _mutate_list(self, v):
-        pass
+        mutations = []
+        # print(v)
+        original = list(v)
+        # print(original)
+
+        # Add new fucky element
+        new = OrderedDict()
+        new["@sample_att"+str(self._seed)] = "sample_value"
+        new["#text"] = "sample_input"
+        v.append(new)
+        mutations.append(list(v))
+        v = list(original)
+
+        # Remove element enumerations
+        for i in range(len(v)):
+            del v[i]
+            mutations.append(list(v))
+            v = list(original)
+        
+        self._seed += 1
+        return mutations
     
     def _get_type_(self, v):
         if self._is_int_(v):
