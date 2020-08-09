@@ -6,5 +6,5 @@ if [ "$(id -u)" -eq 0 ]; then
     exit
 fi
 
-python3 -m pip install --user xmltodict
+python3 -m pip install --user xmltodict psutil
 sudo apt install qemu
