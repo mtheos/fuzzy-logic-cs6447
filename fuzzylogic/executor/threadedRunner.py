@@ -92,6 +92,8 @@ class ThreadedRunner:
 
     @classmethod
     def _run_task_(cls, binary, _input, task_id, architecture):
+        if _input[-1] != '\n':
+            raise Exception('Input should end in a new line')
         run_binary = f'{binary} >/dev/null 2>/dev/null <<\'EOF\'\n{_input}EOF'
         if architecture not in ['i386', 'amd64']:
             code = os.system(run_binary)
