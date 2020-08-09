@@ -90,12 +90,12 @@ class XmlMutator:
     """
     def recurse(self, original):
         if type(original) is OrderedDict:
-            # if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
-            #     for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
-            #         original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
-            #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
-            #     for i in range(Strategy.members_to_add_to_dict):
-            #         del original["tag"+str(i)]
+            if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
+                for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
+                    original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
+                self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                for i in range(Strategy.members_to_add_to_dict):
+                    del original["tag"+str(i)]
             
             for k,v in original.items():
                 if type(v) is OrderedDict:
