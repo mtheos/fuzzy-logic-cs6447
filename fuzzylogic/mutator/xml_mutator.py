@@ -98,7 +98,7 @@ class XmlMutator:
             #         del original["tag"+str(i)]
             
             for k,v in original.items():
-                print ("                   k = ", k, " v = ", v)
+                # print ("                   k = ", k, " v = ", v)
                 if type(v) is OrderedDict:
                     # original[k] = OrderedDict()
                     # original[k]["GGGGGGGG"] = "GGGGGGGG"
@@ -138,7 +138,7 @@ class XmlMutator:
                     typed_v = v_type(v)
                     mutation = self._mutators[v_type].mutate(typed_v)
                     original[k] = str(mutation)
-                    print(f"type {v_type} mutation on '{v}': "+ xmltodict.unparse(self._original, full_document=False))
+                    # print(f"type {v_type} mutation on '{v}': "+ xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = v
                     # print('--')
