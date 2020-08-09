@@ -1,6 +1,7 @@
 import os
-import resource
 import time
+import psutil
+import resource
 from queue import PriorityQueue, Queue
 from threading import Thread
 from .strategy import Strategy
@@ -24,7 +25,8 @@ class FuzzOrchestrator:
             'MAX_RUNNING_INPUTS': runner.num_workers() * 2,
             'MIN_QUEUED_INPUTS': runner.num_workers() * 2,
             'MAX_QUEUED_INPUTS': runner.num_workers() * 3,
-            'MEMORY_LIMIT': 4000
+            # We use as much memory as we need but leave a small buffer so we don't get killed
+            'MEMORY_BUFFER': 400,
         }
         self._runOrchestrator = RunOrchestrator(runner, self._fuzzer_inputs, self._running_tasks, self._limits)
         self._checkOrchestrator = CheckOrchestrator(runner, self._fuzzer_inputs, self._running_tasks, self._to_mutate, self._seen, self._limits)
@@ -55,7 +57,7 @@ class FuzzOrchestrator:
             self._runOrchestrator.run_new_inputs(binary)  # Start new jobs
             self._checkOrchestrator.check_finished_inputs()  # Check for finished jobs
             self._mutateOrchestrator.create_more_inputs()  # create new mutations
-            if self._get_memory_usage_mb_() > self._limits['MEMORY_LIMIT']:
+            if self._get_free_memory_mb_() < self._limits['MEMORY_BUFFER']:
                 self._mutateOrchestrator.cull_traces()  # cull traces of old mutations (limit memory)
             # if self._checkOrchestrator.completed_runs() > 5000:
             #     self._checkOrchestrator._final_code = 6847
@@ -89,7 +91,7 @@ class FuzzOrchestrator:
             console += f' Fuzz Q Size    : {self._limits["MIN_QUEUED_INPUTS"]} - {self._limits["MAX_QUEUED_INPUTS"]}\n'
             console += f' Runner         : {"Stalled!" if self._runOrchestrator.stalled() else "OK"}          \n'
             console += f' Mutator        : {"Stalled!" if self._mutateOrchestrator.stalled() else "OK"}          \n'
-            console += f' Max RSS        : {self._get_memory_usage_mb_()} MB (Limit {self._limits["MEMORY_LIMIT"]} MB)     \n'
+            console += f' Max RSS        : {self._get_memory_rss_mb_()} MB (Free {self._get_free_memory_mb_()} MB)     \n'
             console += f' Ctrl+C to exit\n'
             print(console)
             if self._checkOrchestrator.final_result()[0] is not None:
@@ -118,8 +120,12 @@ class FuzzOrchestrator:
             self._limits['MAX_QUEUED_INPUTS'] = min(int(self._limits['MAX_QUEUED_INPUTS'] * 1.2) + 1, self._runner.num_workers() * 11)
 
     @staticmethod
-    def _get_memory_usage_mb_():
-        return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000
+    def _get_memory_rss_mb_():
+        return int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000)
+
+    @staticmethod
+    def _get_free_memory_mb_():
+        return int(psutil.virtual_memory().available / 1000000)
 
     def __repr__(self):
         return f'Inputs waiting to run: {len(self._fuzzer_inputs.queue)} | Inputs running: {len(self._running_tasks.queue)}'
@@ -228,7 +234,7 @@ class MutateOrchestrator:
                         priority = self._priority_function_(mutation, distance, trace_info)
                         self._put_(_input=mutation, priority=priority, previous=_input, distance=distance, strategy=this_strategy)
 
-    # Need to limit memory usage to something reasonable... 4GB
+    # Need to limit memory usage to something reasonable...
     # Clear our the trace info for the earliest inputs (hopefully these have been fuzzed by now)
     def cull_traces(self):
         limit = self._added_order.qsize() // 4 * 3
