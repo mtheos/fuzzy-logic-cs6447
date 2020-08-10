@@ -17,7 +17,7 @@ class FloatMutator:
     @staticmethod
     def _meme_mutation_(_):
         options = [0, float('-inf'), float('inf'), float('NaN')]
-        return random.choice(options)
+        return random.choices(options, weights=[3, 4, 4, 4], k=1)
 
     @staticmethod
     def _add_mutation_(f):  # % by max int if max int is provided (??)

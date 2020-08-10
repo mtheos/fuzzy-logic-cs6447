@@ -262,7 +262,6 @@ class MutateOrchestrator:
             strategy_discount = 10 if self._strategy[self._prev[_input]] == Strategy.ADD_DICTS else 1
         else:  # deprioritise inputs that insert lots of shit
             strategy_discount = 1
-
         return -1 / (distance + 15) * (len(trace_info.jumps()) + unique_discovery) / strategy_discount
 
     def awaiting_fuzzing(self):
