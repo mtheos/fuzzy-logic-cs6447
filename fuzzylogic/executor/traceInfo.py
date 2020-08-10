@@ -1,18 +1,27 @@
 class TraceInfo:
-    def __init__(self, jumps):
+
+    def __init__(self, jumps, arch):
         # self._jumps = jumps
-        BEFORE_START_OF_CODE = 0x08049000
-        AFTER_END_OF_CODE = 0x09000000
-        self._jumps = sorted(set(jumps))  # sorted will make a list
+        # TODO @Kapslock determine addr range by arch
+        if arch == 'i386':  # trace is instructions so it's fine if the heap is in the range
+            code_start = 0x08048000
+            code_end = 0x09000000
+        else:
+            code_start = 0x00400000
+            code_end = 0x00500000
+        # self._jumps = sorted(set(jumps))  # sorted will make a list
+        self._jumps = jumps
         self._edges = {}  # edges in the execution path
+        # TODO @Kapslock should this be done before or after we turn the jumps into a sorted list
         for i in range(1, len(self._jumps)):
-            if self._jumps[i] < BEFORE_START_OF_CODE or self._jumps[i] > AFTER_END_OF_CODE or \
-               self._jumps[i-1] < BEFORE_START_OF_CODE or self._jumps[i-1] > AFTER_END_OF_CODE:
+            if self._jumps[i] < code_start or self._jumps[i] > code_end or \
+               self._jumps[i-1] < code_start or self._jumps[i-1] > code_end:
                 continue
             if (self._jumps[i-1], self._jumps[i]) not in self._edges:
                 self._edges[(self._jumps[i - 1], self._jumps[i])] = 1
             else:
                 self._edges[(self._jumps[i - 1], self._jumps[i])] += 1
+        self._jumps = sorted(set(jumps))  # sorted will make a list
 
     def jumps(self):
         return self._jumps
