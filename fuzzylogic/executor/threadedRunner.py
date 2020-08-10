@@ -94,8 +94,12 @@ class ThreadedRunner:
         # Return value doesn't matter either as the main thread won't look at it anymore
         if cls._shutdown:
             return
-        if _input[-1] != '\n':
-            raise Exception('Input should end in a new line')
+        if len(_input) > 0:
+            if _input[-1] != '\n':
+                print('usually input should end in a new line so either we fucked up or its a special case')
+        else:
+            print('either we fucked up or its a special case')
+
         run_binary = f'{binary} >/dev/null 2>/dev/null <<\'EOF\'\n{_input}EOF'
         if architecture not in ['i386', 'amd64']:
             code = os.system(run_binary)
