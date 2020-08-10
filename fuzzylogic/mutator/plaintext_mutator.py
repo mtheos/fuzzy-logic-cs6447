@@ -12,6 +12,7 @@ class PlainTextMutator:
         self._mutators = {str: StringMutator(), int: IntMutator(), float: FloatMutator()}
     
     def mutate(self, _input, strategy='none'):
+        print("jeff besos lol" + _input + "amazon is evil")
         self._analyse_(_input)
         self.yields = []
         mutated_split = []
@@ -20,10 +21,11 @@ class PlainTextMutator:
             # print("we are mutating", self._original[item])
             type_item = self._get_type_(self._original[item])
             # print("original",self._original[item])
-            if strategy is "none":
-                mutated = self._mutators[type_item].mutate(self._original[item])
-            else:
-                mutated = self._mutators[type_item].deterministic_mutator(self._original[item], strategy)
+            # if strategy is  "none":
+            mutated = self._mutators[type_item].mutate(self._original[item])
+            
+                # print("AAAAAAAAAAAAAAAAAAAA")
+                # mutated = self._mutators[type_item].deterministic_mutator(self._original[item], strategy)
             crazy.append(mutated)
             copy = list(self._original)
             copy[item] = mutated
@@ -31,8 +33,8 @@ class PlainTextMutator:
             mutated_split.append(copy)
             # print("yield is currently", self.yields)
         mutated_split.append(crazy)
+
         for item in mutated_split:
-            # print(item)
             string = ""
             for items in item:
                 string += str(items)
@@ -41,9 +43,10 @@ class PlainTextMutator:
         for y in self.yields:
             if y[-1] != "\n":
                 y += "\n"
+                print("GRRRRR" + _input + "GRRRRRRR")
                 yield y
 
-        return self.yields
+        # return self.yields
 
     def _analyse_(self, _input):
         """
@@ -52,7 +55,7 @@ class PlainTextMutator:
         nums = re.findall(r'-?\d+\.?\d*', _input)
         # nums = [self._get_type_(x)(x) for x in nums]
         # nums = [x for x in nums]
-        print(nums)
+        # print(nums)
 
         self._original = []
         for num in nums:
