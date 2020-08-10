@@ -42,12 +42,10 @@ class XmlMutator:
         # print(self._original)
         self._strategy = strategy
         self.recurse(self._original)
-        # print("\n".join(self._yields))
         for y in self._yields:
             if y[-1] != '\n':
                 y += '\n'
-            yield y
-        # return self._yields
+                yield y
 
     """
     Parses string input
@@ -91,43 +89,56 @@ class XmlMutator:
     """
     def recurse(self, original):
         if type(original) is OrderedDict:
-            # if (self._strategy == Strategy.ADD_DICTS): #badly named. adds members to dict.
-            #     for i in range(Strategy.members_to_add_to_dict): #who cares if we overwrite existing shit
-            #         original["tag"+str(i)] ={"#text":"some nice cool sample meme"}
-            #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
-            #     for i in range(Strategy.members_to_add_to_dict):
-            #         del original["tag"+str(i)]
-            
             for k, v in original.items():
                 if type(v) is OrderedDict:
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
-                        # print(f"*********Dict mutation on {k}:\n++++++"+xmltodict.unparse(self._original, full_document=False))
-                        # print(mutation,'\n')
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = v
                     self.recurse(v)
                 elif type(v) is list:
                     for mutation in self._mutate_list(list(v)):
                         original[k] = list(mutation)
-                        # print(f"List mutation on {v}:\n++"+xmltodict.unparse(self._original, full_document=False))
-                        # print(mutation)
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = v
                     self.recurse(v)
                 elif v is None:
                     original[k] = self._get_sample_element_()
-                    # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
                 else: # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
-                    original[k] = str(self._fat_type_mutation_(self._mutators[v_type],typed_v))
-                    # print(f"type {v_type} mutation on '{v}': "+ xmltodict.unparse(self._original, full_document=False))
-                    # print(mutation)
+                    if self._strategy != 'None':
+                        determ_mutations = self._mutators[v_type].deterministic_mutator(typed_v, self._strategy)
+                        if len(determ_mutations) < 2 and determ_mutations[0] == typed_v:
+                            # print("LELELLELELELELELELEL")
+                            mutation = self._fat_type_mutation_(self._mutators[v_type],typed_v)
+                        else:
+                            mutation = random.choice(self._mutators[v_type].deterministic_mutator(typed_v, self._strategy))
+                    else:
+                        mutation = self._fat_type_mutation_(self._mutators[v_type],typed_v)
+                    
+                    original[k] = str(mutation)
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = v
+                    
+                    # if self._strategy != 'None':
+                    #     v_type = self._get_type_(v)
+                    #     typed_v = v_type(v)
+                    #     determ_mutations = self._mutators[v_type].deterministic_mutator(typed_v, self._strategy)
+                    #     if len(determ_mutations) < 2:
+                    #         continue
+                    #     mutation in random.choice(self._mutators[v_type].deterministic_mutator(typed_v, self._strategy))
+                    #     original[k] = str(mutation)
+                    #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    #     original[k] = v
+                    # else:
+                    #     v_type = self._get_type_(v)
+                    #     typed_v = v_type(v)
+                    #     original[k] = str(self._fat_type_mutation_(self._mutators[v_type],typed_v))
+                    #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
+                    #     original[k] = v
 
         elif type(original) is list:
             for k in range(len(original)):
@@ -135,22 +146,17 @@ class XmlMutator:
                 if type(v) is OrderedDict:
                     for mutation in self._mutate_ordered_dict(OrderedDict(v)):
                         original[k] = OrderedDict(mutation)
-                        # print(f"*********Dict mutation on {k}:\n++++++"+xmltodict.unparse(self._original, full_document=False))
-                        # print(mutation)
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = v
                     self.recurse(v)
                 elif type(v) is list:
                     for mutation in self._mutate_list(list(v)):
                         original[k] = list(mutation)
-                        # print(f"List mutation on {v}:\n++"+xmltodict.unparse(self._original, full_document=False))
-                        # print(mutation)
                         self._yields.append(xmltodict.unparse(self._original, full_document=False))
                         original[k] = v
                     self.recurse(v)
                 elif v is None:
                     original[k] = self._get_sample_element_()
-                    # print("new Elem: "+xmltodict.unparse(self._original, full_document=False))
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
 
@@ -183,12 +189,6 @@ class XmlMutator:
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
 
-        # Enumerate removal of attributes
-        # for key in [key for key in v.keys() if key[0] == '@']:
-        #     del v[key]
-        #     mutations.append(OrderedDict(v))
-        #     v = OrderedDict(original)
-
         # add text
         if '#text' not in v.keys():
             string = 'sample_attr'
@@ -212,18 +212,11 @@ class XmlMutator:
 
         # remove random element
         elem_list = [key for key in v.keys() if key[0] != '@' and key[0] != '#']
-        # for i in range(random.randint(0,int(len(elem_list)/2))):
         if len(elem_list) > 0:
             random_key = random.choice(elem_list)
             del v[random_key]
             mutations.append(OrderedDict(v))
             v = OrderedDict(original)
-
-        # remove element
-        # for key in [key for key in v.keys() if key[0] != '@' and key[0] != '#']:
-        #     del v[key]
-        #     mutations.append(OrderedDict(v))
-        #     v = OrderedDict(original)
 
         self._seed += 1
         return mutations
@@ -245,18 +238,11 @@ class XmlMutator:
         v = list(original)
 
         # remove random element
-        # for i in range(random.randint(0,int(len(v)/2))):
         rand_index = random.choice(range(len(v)))
         del v[rand_index]
         mutations.append(list(v))
         v = list(original)
 
-        # Remove element enumerations
-        # for i in range(len(v)):
-        #     del v[i]
-        #     mutations.append(list(v))
-        #     v = list(original)
-        
         return mutations
 
     @staticmethod

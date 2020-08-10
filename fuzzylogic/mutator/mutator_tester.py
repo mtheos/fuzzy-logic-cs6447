@@ -101,8 +101,9 @@ original = """
 
 # xml_dict = xmltodict.parse(original)
 
-for i in range(200):
-    mut.mutate(original)
+# # for i in range(200):
+# for thing in mut.mutate(original):
+#     print(thing)
 
 # rand_index = random.choice(range(5))
 # print(rand_index)
@@ -150,7 +151,7 @@ def recurse(item):
         
 
 
-string ='hell1123 wow 32yes, how is lif3 so do32.22'
+string ='hell1123 wow 32yes, 000 how is lif3 so do32.22'
 
 def split_string_by_types(string):
     print(f"\n{string}")
@@ -171,8 +172,8 @@ def split_string_by_types(string):
     # print(str_broken)
     return str_broken
 # print("\n".join(ints))
-
-# print(split_string_by_types(string))
+# lol = "".join(split_string_by_types(string))
+print(""[0])
 
 # listy = [1,2,3,4,5]
 

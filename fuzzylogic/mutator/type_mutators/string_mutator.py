@@ -94,7 +94,7 @@ class StringMutator:
         if strategy is 'format':
             for iterator in range(len(i)):
                 temp = i
-                changed = temp[:iterator] + ' %s %n ' + temp[iterator + 1:]
+                changed = temp[:iterator] + '%s%n%s%n%s%n' + temp[iterator + 1:]
                 mutation_list.append(changed)
             return mutation_list
 
