@@ -109,7 +109,11 @@ class ThreadedRunner:
                 raise RuntimeError('If you got this error, you spelt i386 or amd64 wrong :)')
             trace_file = f'/dev/shm/trace_{task_id}'
             max_file_size = int(1e6)  # if it's bigger than this, dont bother
-            code = os.system(f'{qemu} -d exec -D {trace_file} {run_binary}')
+            try:
+                code = os.system(f'{qemu} -d exec -D {trace_file} {run_binary}')
+            except:
+                code = 0
+                print("memes")
             fd = os.open(trace_file, os.O_RDONLY)
             trace_file_data = os.read(fd, max_file_size)
             os.close(fd)

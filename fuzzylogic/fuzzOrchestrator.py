@@ -44,12 +44,12 @@ class FuzzOrchestrator:
             self._checkOrchestrator._final_input = 'User exit'
             self._runner.shutdown(True)
             self._stat_printer.join()
-        except Exception as e:
-            self._checkOrchestrator._final_code = 6448
-            self._checkOrchestrator._final_input = e
-            self._runner.shutdown(True)
-            self._stat_printer.join()
-            raise
+        # except Exception as e:
+        #     self._checkOrchestrator._final_code = 6448
+        #     self._checkOrchestrator._final_input = e
+        #     self._runner.shutdown(True)
+        #     self._stat_printer.join()
+        #     raise
 
     def _run_(self, binary):
         while True:
