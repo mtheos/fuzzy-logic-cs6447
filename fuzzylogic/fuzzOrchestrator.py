@@ -34,7 +34,6 @@ class FuzzOrchestrator:
                                                       self._limits)
 
     def run(self, binary):
-        os.system('clear')
         self._start_time = time.time()
         self._stat_printer = Thread(target=self._print_stats_, name='stat-printer', args=(binary,))
         self._stat_printer.start()
@@ -47,7 +46,7 @@ class FuzzOrchestrator:
             self._stat_printer.join()
         except Exception as e:
             self._checkOrchestrator._final_code = 6448
-            self._checkOrchestrator._final_input = repr(e)
+            self._checkOrchestrator._final_input = e
             self._runner.shutdown()
             self._stat_printer.join()
 
@@ -76,10 +75,11 @@ class FuzzOrchestrator:
         return (*self._checkOrchestrator.final_result(), self._checkOrchestrator.completed_runs())
 
     def _print_stats_(self, binary):
+        print('\n Fuzzy-Logic-6447 - "Our logic is fuzzy but our minds are sharp"\n')
+        print('\033[s')  # save cursor position
         while True:
             m, s = divmod(int(time.time() - self._start_time), 60)
-            print(f'\033[{0};{0}H')
-            console = ' Fuzzy-Logic-6447 - "Our logic is fuzzy but our minds are sharp"\n\n'
+            console = f'\033[u'
             console += f' Binary         : {binary} ({self._runner.get_arch()})\n'
             console += f' Elapsed        : {m}:{str(s).zfill(2)}\n'
             console += f' Total attempts : {self._checkOrchestrator.completed_runs()}\n'
@@ -95,7 +95,7 @@ class FuzzOrchestrator:
             console += f' Ctrl+C to exit\n'
             print(console)
             if self._checkOrchestrator.final_result()[0] is not None:
-                print(' *************')
+                print('\n\n *************')
                 if self._checkOrchestrator.final_result()[0] == 6447:
                     print(' User exit')
                 else:
