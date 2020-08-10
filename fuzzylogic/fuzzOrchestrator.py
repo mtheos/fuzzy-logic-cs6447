@@ -39,6 +39,7 @@ class FuzzOrchestrator:
         self._stat_printer.start()
         try:
             self._run_(binary)
+            self._stat_printer.join()
         except KeyboardInterrupt:
             self._checkOrchestrator._final_code = 6447
             self._checkOrchestrator._final_input = 'User exit'
@@ -65,7 +66,6 @@ class FuzzOrchestrator:
             if self._checkOrchestrator.final_result()[0] is not None:
                 self._runner.shutdown()
                 break
-        self._stat_printer.join()
 
     def put(self, _input, priority, previous=None, distance=0):
         self._fuzzer_inputs.put(QueueItem(_input, priority))
@@ -189,7 +189,7 @@ class CheckOrchestrator:
                 continue
             code, _input, trace_info = self._runner.get_result(task_id)
             self._completed += 1
-            if code != 0 and code != 134:  # abort doesn't count
+            if code == 139:  # We only look at segfaults
                 self._final_input = _input
                 self._final_code = code
             self._seen[_input] = trace_info

@@ -18,6 +18,7 @@ except Exception:
 class ThreadedRunner:
     _exit_codes_ = defaultdict(lambda: 'Something happened?')
     _exit_codes_[0] = 'Nope :('
+    _exit_codes_[1] = 'Pranked :('
     _exit_codes_[-6] = 'abort! :('
     _exit_codes_[-11] = 'Segfault! :)'
     _exit_codes_[134] = 'abort! :('
