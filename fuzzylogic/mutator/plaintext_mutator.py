@@ -44,8 +44,8 @@ class PlainTextMutator:
         for y in self.yields:
             if y[-1] != "\n":
                 y += "\n"
-                print("GRRRRR" + _input + "GRRRRRRR")
-                yield y
+            # print("GRRRRR" + _input + "GRRRRRRR")
+            yield y
 
         # return self.yields
 
@@ -61,7 +61,7 @@ class PlainTextMutator:
         self._original = []
         for num in nums:
             self._original.append(_input[:_input.index(str(num))])
-            self._original.append(int(num))
+            self._original.append(int(num) if self._is_int_(num) else float(num))
             n_min = _input.index(str(num)) + len(str(num))
             _input = _input[n_min:]
         # print("nums is", nums)
