@@ -1,4 +1,6 @@
 import re
+import random
+
 from .type_mutators import IntMutator
 from .type_mutators import FloatMutator
 from .type_mutators import StringMutator
@@ -17,21 +19,28 @@ class PlainTextMutator:
         self.yields = []
         mutated_split = []
         crazy = []
+        crazyy = []
         for item in range(len(self._original)):
             # print("we are mutating", self._original[item])
             type_item = self._get_type_(self._original[item])
             # print("original",self._original[item])
             # if strategy is  "none":
             mutated = self._mutators[type_item].mutate(self._original[item])
+            mutatedd = self.magic_byte_mutator(self._original[item])
             # print("AAAAAAAAAAAAAAAAAAAA")
             # mutated = self._mutators[type_item].deterministic_mutator(self._original[item], strategy)
             crazy.append(mutated)
+            crazyy.append(mutatedd)
             copy = list(self._original)
             copy[item] = mutated
+            copyy = list(self._original)
+            copyy[item] = mutatedd
             # print("copy is", copy)
             mutated_split.append(copy)
+            mutated_split.append(copyy)
             # print("yield is currently", self.yields)
         mutated_split.append(crazy)
+        mutated_split.append(crazyy)
 
         for item in mutated_split:
             string = ""
@@ -112,3 +121,18 @@ class PlainTextMutator:
     @staticmethod
     def empty():
         return '\n'
+
+    def magic_byte_mutator(self, s):
+        if s == '':
+            return s
+        if s is type(int) or type(float):
+            return s
+        pos = random.randint(0, len(s) - 1)
+        c = s[pos]
+        bit = 1 << random.randint(0, 6)
+        temp = ord(c) ^ bit
+        if temp in [0x0, 0xa]:
+            temp = ord(c)
+        new_c = chr(temp)
+        # print('--Flipping', bit, 'in', repr(c) + ', giving', repr(new_c))
+        return s[:pos] + new_c + s[pos + 1:]
