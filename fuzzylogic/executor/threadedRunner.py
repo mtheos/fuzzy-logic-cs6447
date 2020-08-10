@@ -1,4 +1,5 @@
 import os
+import distro
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor as PoolExecutor
 from .traceInfo import TraceInfo
@@ -39,9 +40,9 @@ class ThreadedRunner:
     def num_workers(self):
         return self._num_workers
 
-    def shutdown(self):
+    def shutdown(self, wait=False):
         self._shutdown = True
-        self._executor.shutdown(wait=False)
+        self._executor.shutdown(wait)
 
     def clear_stalled(self):
         # stalled is called on 2 threads (reporting + work)
@@ -112,8 +113,8 @@ class ThreadedRunner:
             fd = os.open(trace_file, os.O_RDONLY)
             trace_file_data = os.read(fd, max_file_size)
             os.close(fd)
-            os.remove(trace_file)
-            trace_data = cls.get_trace(trace_file_data, architecture)
+            # os.remove(trace_file)
+            trace_data = cls._get_trace_(trace_file_data, architecture)
         # the return value from os.system is 2 bytes
         # the high byte is the exit code and the low byte is the signal (if any)
         # so >> 8 will get just the exit code
@@ -123,8 +124,15 @@ class ThreadedRunner:
             code >>= 8
         return code, _input, TraceInfo(trace_data, architecture)
 
+    @classmethod
+    def _get_trace_(cls, file_data, architecture):
+        # qemu returns a differently formatted trace file in 20.04... fml
+        if distro.version()[:2] == '20' and architecture == 'amd64':
+            return cls._get_trace_20_04_special_(file_data)
+        return cls._get_trace_rest_(file_data, architecture)
+
     @staticmethod
-    def get_trace(file_data, architecture):
+    def _get_trace_rest_(file_data, architecture):
         # if you got this far and your binary wasn't i386 or amd64, you're probably already having a bad day
         if architecture == 'amd64':
             address_size = 16
@@ -133,3 +141,17 @@ class ThreadedRunner:
         file_data = file_data[file_data.find(b'Trace'):]
         trace = list(map(lambda x: int(x[-address_size:], 0x10), file_data.split(b']')[:-1]))
         return trace
+
+    @staticmethod
+    def _get_trace_20_04_special_(file_data):
+        # special implementation only for 64 bit on Ubuntu 20.04
+        address_size = 16
+        file_data = file_data[file_data.find(b'Trace'):]
+        trace = []
+        for line in file_data.split(b']')[:-1]:
+            line = line[line.index(b'[') + 1:]
+            if len(line) == 16:
+                trace.append(line)
+            else:
+                trace.append(line[-(address_size + 9):-9])
+        return list(map(lambda x: int(x, 0x10), trace))
