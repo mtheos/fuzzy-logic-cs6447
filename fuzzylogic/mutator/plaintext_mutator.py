@@ -17,6 +17,7 @@ class PlainTextMutator:
         mutated_split = []
         crazy = []
         for item in range(len(self._original)):
+            # print("we are mutating", self._original[item])
             type_item = self._get_type_(self._original[item])
             # print("original",self._original[item])
             if strategy is "none":
@@ -37,6 +38,11 @@ class PlainTextMutator:
                 string += str(items)
             self.yields.append(string)
 
+        for y in self.yields:
+            if y[-1] != "\n":
+                y += "\n"
+                yield y
+
         return self.yields
 
     def _analyse_(self, _input):
@@ -44,17 +50,23 @@ class PlainTextMutator:
         Given plaintext input, break up the input into its respective types
         """
         nums = re.findall(r'-?\d+\.?\d*', _input)
-        nums = [self._get_type_(x)(x) for x in nums]
+        # nums = [self._get_type_(x)(x) for x in nums]
+        # nums = [x for x in nums]
+        print(nums)
 
         self._original = []
         for num in nums:
             self._original.append(_input[:_input.index(str(num))])
-            self._original.append(num)
+            self._original.append(int(num))
             n_min = _input.index(str(num)) + len(str(num))
             _input = _input[n_min:]
+        # print("nums is", nums)
         self._original.append(_input)
-        self._original = list(filter(None, self._original))
-        return self._original
+        # print("before", self._original)
+        # self._original = list(filter(None, self._original))
+        if self._original[-1] is "":
+            del self._original[-1]
+        return self._original 
 
     def _get_type_(self, v):
         if self._is_int_(v):
@@ -84,12 +96,16 @@ class PlainTextMutator:
     @staticmethod
     def _is_str_(v):
         try:
-            raise ValueError('This error is in _is_str_ in csv mutator')
+            # raise ValueError('This error is in _is_str_ in csv mutator')
             # OK, now that I have your attention. This function won't work
             # Almost anything can be represented as a string, the str function
             # will only fail if your input has non printable bytes \x00 \x01 etc
             # You need to assume str if your other checks all fail
-            # str(v)
-            # return True
+            str(v)
+            return True
         except ValueError:
             return False
+
+    @staticmethod
+    def empty():
+        return '\n'
