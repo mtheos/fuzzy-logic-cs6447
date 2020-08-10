@@ -12,7 +12,7 @@ class PlainTextMutator:
         self._mutators = {str: StringMutator(), int: IntMutator(), float: FloatMutator()}
     
     def mutate(self, _input, strategy='none'):
-        print("jeff besos lol" + _input + "amazon is evil")
+        # print("jeff besos lol\n" + _input + "amazon is evil")
         self._analyse_(_input)
         self.yields = []
         mutated_split = []
@@ -23,9 +23,8 @@ class PlainTextMutator:
             # print("original",self._original[item])
             # if strategy is  "none":
             mutated = self._mutators[type_item].mutate(self._original[item])
-            
-                # print("AAAAAAAAAAAAAAAAAAAA")
-                # mutated = self._mutators[type_item].deterministic_mutator(self._original[item], strategy)
+            # print("AAAAAAAAAAAAAAAAAAAA")
+            # mutated = self._mutators[type_item].deterministic_mutator(self._original[item], strategy)
             crazy.append(mutated)
             copy = list(self._original)
             copy[item] = mutated

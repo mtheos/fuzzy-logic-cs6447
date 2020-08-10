@@ -46,7 +46,7 @@ class XmlMutator:
         for y in self._yields:
             if y[-1] != '\n':
                 y += '\n'
-                yield y
+            yield y
         # return self._yields
 
     """
