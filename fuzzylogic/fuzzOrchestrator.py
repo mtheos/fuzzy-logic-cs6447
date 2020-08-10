@@ -37,16 +37,17 @@ class FuzzOrchestrator:
         self._stat_printer.start()
         try:
             self._run_(binary)
+            self._runner.shutdown(True)
             self._stat_printer.join()
         except KeyboardInterrupt:
             self._checkOrchestrator._final_code = 6447
             self._checkOrchestrator._final_input = 'User exit'
-            self._runner.shutdown()
+            self._runner.shutdown(True)
             self._stat_printer.join()
         except Exception as e:
             self._checkOrchestrator._final_code = 6448
             self._checkOrchestrator._final_input = e
-            self._runner.shutdown()
+            self._runner.shutdown(True)
             self._stat_printer.join()
             raise
 
@@ -62,7 +63,6 @@ class FuzzOrchestrator:
             #     self._checkOrchestrator._final_code = 6847
             #     self._checkOrchestrator._final_input = 'Debug exit'
             if self._checkOrchestrator.final_result()[0] is not None:
-                self._runner.shutdown()
                 break
 
     def put(self, _input, priority, previous=None, distance=0):
