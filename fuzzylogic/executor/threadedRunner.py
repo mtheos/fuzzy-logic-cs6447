@@ -94,12 +94,6 @@ class ThreadedRunner:
         # Return value doesn't matter either as the main thread won't look at it anymore
         if cls._shutdown:
             return
-        if len(_input) > 0:
-            if _input[-1] != '\n':
-                print('usually input should end in a new line so either we fucked up or its a special case')
-        else:
-            print('either we fucked up or its a special case')
-
         run_binary = f'{binary} >/dev/null 2>/dev/null <<\'EOF\'\n{_input}EOF'
         if architecture not in ['i386', 'amd64']:
             code = os.system(run_binary)
@@ -107,17 +101,14 @@ class ThreadedRunner:
         else:
             if architecture == 'i386':
                 qemu = 'qemu-i386'
-            elif architecture == 'amd64':
+            else:  # 'amd64'
                 qemu = 'qemu-x86_64'
-            else:
-                raise RuntimeError('If you got this error, you spelt i386 or amd64 wrong :)')
             trace_file = f'/dev/shm/trace_{task_id}'
             max_file_size = int(1e6)  # if it's bigger than this, dont bother
             try:
                 code = os.system(f'{qemu} -d exec -D {trace_file} {run_binary}')
-            except:
-                code = 0
-                print("memes")
+            except UnicodeEncodeError:
+                return -1, _input, TraceInfo([], architecture)
             fd = os.open(trace_file, os.O_RDONLY)
             trace_file_data = os.read(fd, max_file_size)
             os.close(fd)
