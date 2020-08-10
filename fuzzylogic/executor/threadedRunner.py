@@ -22,6 +22,7 @@ class ThreadedRunner:
     _exit_codes_[-11] = 'Segfault! :)'
     _exit_codes_[134] = 'abort! :('
     _exit_codes_[139] = 'Segfault! :)'
+    _shutdown = False
 
     def __init__(self):
         # double the number of cores seems to be optimal, after this performance starts to drop off, tanking at 3x
@@ -29,7 +30,6 @@ class ThreadedRunner:
         self._runs = 0
         self._tasks = {}
         self._next_task = 0
-        self._shutdown = False
         self._has_stalled = False
         self._architecture = None
         self._num_workers = os.cpu_count() * 2  # Felt cute, might tweak later
@@ -48,8 +48,6 @@ class ThreadedRunner:
         self._has_stalled = False
 
     def stalled(self):
-        if self._shutdown:
-            return False
         stalled = self._has_stalled
         return stalled
 
@@ -57,14 +55,12 @@ class ThreadedRunner:
         task = self._tasks.get(task_id, None)
         if task is None:
             raise KeyError(f'{task_id} was requested but is not known')
-        # return task.future.done()
         return task.done()
 
     def get_result(self, task_id):
         task = self._tasks.get(task_id, None)
         if task is None:
             raise KeyError(f'{task_id} was requested but is not known')
-        # if not task.future.done():
         if not task.done():
             raise BlockingIOError('Check is task is done with is_done(task_id) first')
         del self._tasks[task_id]
@@ -92,6 +88,10 @@ class ThreadedRunner:
 
     @classmethod
     def _run_task_(cls, binary, _input, task_id, architecture):
+        # Running qemu to clear jobs is (comparatively) slow if we're just shutting down.
+        # Return value doesn't matter either as the main thread won't look at it anymore
+        if cls._shutdown:
+            return
         if _input[-1] != '\n':
             raise Exception('Input should end in a new line')
         run_binary = f'{binary} >/dev/null 2>/dev/null <<\'EOF\'\n{_input}EOF'
@@ -120,7 +120,7 @@ class ThreadedRunner:
         # code = 0  # Sometimes I need it to run longer
         if code != 0:
             code >>= 8
-        return code, _input, TraceInfo(trace_data)
+        return code, _input, TraceInfo(trace_data, architecture)
 
     @staticmethod
     def get_trace(file_data, architecture):
