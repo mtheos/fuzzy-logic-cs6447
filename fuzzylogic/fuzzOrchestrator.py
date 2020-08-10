@@ -247,7 +247,6 @@ class MutateOrchestrator:
                     if mutation not in self._seen:
                         distance = self._dist[_input] + 1
                         priority = self._priority_function_(mutation, distance, trace_info)
-                        global_i+=1
                         self._put_(_input=mutation, priority=priority, previous=_input, distance=distance, strategy=this_strategy)
 
     # Need to limit memory usage to something reasonable...
