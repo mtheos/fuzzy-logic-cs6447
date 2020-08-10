@@ -57,7 +57,7 @@ def _select_mutator_(content):
         mutator_instance = mutator.XmlMutator()
     elif content_type == mutator.RET_MULTILINE_TEXT:
         print(' Input Type: Plain Text')
-        mutator_instance = None
+        mutator_instance = mutator.PlainTextMutator()
     else:
         raise Exception(f' *** Failed to select mutator for input type.\nContent Type{content_type} ***')
     return mutator_instance
