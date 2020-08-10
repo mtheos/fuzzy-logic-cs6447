@@ -38,7 +38,8 @@ class PlainTextMutator:
             string = ""
             for items in item:
                 string += str(items)
-            self.yields.append(string)
+            if string is not "":
+                self.yields.append(string)
 
         for y in self.yields:
             if y[-1] != "\n":
