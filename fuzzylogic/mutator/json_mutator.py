@@ -1,6 +1,7 @@
 import json
 from ..strategy import Strategy
 from .type_mutators import IntMutator
+from .type_mutators import NullMutator
 from .type_mutators import FloatMutator
 from .type_mutators import StringMutator
 from .type_mutators import BooleanMutator
@@ -16,7 +17,7 @@ class JsonMutator:
         self._keys = None        # List of keys in json
         self._original = None    # Dictionary of json
         self._field_type = None  # Dictionary of key:type
-        self._static_mutators = {str: StringMutator(), int: IntMutator(), float: FloatMutator(), bool: BooleanMutator()}
+        self._static_mutators = {type(None): NullMutator, str: StringMutator(), int: IntMutator(), float: FloatMutator(), bool: BooleanMutator()}
 
     def mutate(self, json_input, strategy='none'):
         # print('\n\n**********')
@@ -98,14 +99,14 @@ class JsonMutator:
     @staticmethod
     def _get_type_(v):
         field_type = type(v)
-        if field_type not in [None, str, int, float, bool, list, dict]:
+        if field_type not in [type(None), str, int, float, bool, list, dict]:
             raise TypeError(f'*** {v} is an unknown type ***')
         return field_type
 
     def _get_mutator_(self, key):
         if self._field_type[key] not in self._mutators:
-            if self._field_type[key] is None:
-                raise TypeError('What even is a "none" mutator?')
+            if self._field_type[key] is type(None):
+                self._mutators[type(None)] = NullMutator()
             elif self._field_type[key] is str:
                 self._mutators[str] = StringMutator()
             elif self._field_type[key] is int:
@@ -118,8 +119,6 @@ class JsonMutator:
                 self._mutators[list] = ListMutator()
             elif self._field_type[key] is dict:
                 self._mutators[dict] = ObjectMutator()
-            else:
-                raise TypeError(f'*** {key} has an unknown type ***')
         return self._mutators[self._field_type[key]]
 
     @staticmethod
