@@ -31,15 +31,15 @@ class IntMutator:
 
     @staticmethod
     def deterministic_mutator(i, strategy):
-        if strategy is "increment":
+        if strategy == "increment":
             return [i + 1]
-        if strategy is "decrement":
+        if strategy == "decrement":
             return [i - 1]
-        if strategy is "zero":
+        if strategy == "zero":
             return 0
-        if strategy is "max":
+        if strategy == "max":
             return [2 ** 31 - 1]
-        if strategy is "min":
+        if strategy == "min":
             return [-(2 ** 31)]
         if strategy == 'make_zero':
             return [i - 1, i + 1, 0, 2 ** 31 - 1, 0 - 2 ** 31]

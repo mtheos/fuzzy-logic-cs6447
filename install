@@ -7,4 +7,5 @@ if [ "$(id -u)" -eq 0 ]; then
 fi
 
 python3 -m pip install --user xmltodict psutil
-sudo apt install qemu
+sudo apt install qemu-user
+

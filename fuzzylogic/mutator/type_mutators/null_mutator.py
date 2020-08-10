@@ -10,9 +10,9 @@ class NullMutator:
     def deterministic_mutator(i, strategy):
         return [None]
         # todo: do different shit depending on the strategy
-        # if strategy is "true":
+        # if strategy == "true":
         #     return [True]
-        # if strategy is "false":
+        # if strategy == "false":
         #     return [False]
         # if strategy == 'make_zero':
         #     return [True, False]

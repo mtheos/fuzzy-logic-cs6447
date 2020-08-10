@@ -24,7 +24,7 @@ class PlainTextMutator:
             # print("we are mutating", self._original[item])
             type_item = self._get_type_(self._original[item])
             # print("original",self._original[item])
-            # if strategy is  "none":
+            # if strategy == "none":
             mutated = self._mutators[type_item].mutate(self._original[item])
             mutatedd = self.magic_byte_mutator(self._original[item])
             # print("AAAAAAAAAAAAAAAAAAAA")

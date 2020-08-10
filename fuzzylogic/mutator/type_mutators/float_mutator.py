@@ -31,17 +31,17 @@ class FloatMutator:
 
     @staticmethod
     def deterministic_mutator(i, strategy):
-        if strategy is "increment":
+        if strategy == "increment":
             return [i + 1]
-        if strategy is "decrement":
+        if strategy == "decrement":
             return [i - 1]
-        if strategy is "zero":
+        if strategy == "zero":
             return [0]
-        if strategy is "min":
+        if strategy == "min":
             return [float("-inf")]
-        if strategy is "max":
+        if strategy == "max":
             return [float("inf")]
-        if strategy is "na":
+        if strategy == "na":
             return [float("NaN")]
         if strategy == 'make_zero':
             return [i - 1, i + 1, 0, float('-inf'), float('inf'), float('NaN')]
