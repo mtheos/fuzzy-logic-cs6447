@@ -113,7 +113,7 @@ class ThreadedRunner:
             fd = os.open(trace_file, os.O_RDONLY)
             trace_file_data = os.read(fd, max_file_size)
             os.close(fd)
-            # os.remove(trace_file)
+            os.remove(trace_file)
             trace_data = cls._get_trace_(trace_file_data, architecture)
         # the return value from os.system is 2 bytes
         # the high byte is the exit code and the low byte is the signal (if any)
