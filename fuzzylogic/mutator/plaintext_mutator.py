@@ -122,7 +122,8 @@ class PlainTextMutator:
     def empty():
         return '\n'
 
-    def magic_byte_mutator(self, s):
+    @staticmethod
+    def magic_byte_mutator(s):
         if s == '':
             return s
         if s is type(int) or type(float):
