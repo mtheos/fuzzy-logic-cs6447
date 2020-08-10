@@ -190,6 +190,8 @@ class CheckOrchestrator:
             if code == 139:  # We only look at segfaults
                 self._final_input = _input
                 self._final_code = code
+            elif code == -1:
+                continue  # bad input, don't mutate this
             self._seen[_input] = trace_info
             self._to_mutate.put(_input)
 
