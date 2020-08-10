@@ -137,11 +137,11 @@ original = """
 
 def recurse(item):
     if type(item) is dict:
-        for k,v in item.items():
+        for k, v in item.items():
             print('k = ', k, ' v = ', v)
             # og_v = dict(v)
             item[k] = 'whack'
-            print(dicty)
+            # print(dict)
             item[k] = v
             recurse(v)
     else:

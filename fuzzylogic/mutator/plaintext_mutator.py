@@ -46,7 +46,7 @@ class PlainTextMutator:
             string = ""
             for items in item:
                 string += str(items)
-            if string is not "":
+            if string != "":
                 self.yields.append(string)
 
         for y in self.yields:
@@ -76,7 +76,7 @@ class PlainTextMutator:
         self._original.append(_input)
         # print("before", self._original)
         # self._original = list(filter(None, self._original))
-        if self._original[-1] is "":
+        if self._original[-1] == "":
             del self._original[-1]
         return self._original 
 
