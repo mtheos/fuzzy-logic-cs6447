@@ -26,11 +26,6 @@ def fuzz(binary, input_file):
         console += f' Debug exit :)\n'
         console += f' {runs} inputs tried\n'
         console += f' {"#" * 20}\n'
-    elif code == 6448:
-        console = f'\n\n {"#" * 40}\n'
-        console += f' Exception in fuzzer! :\'(\n'
-        console += f' Exception => {_input}\n'
-        console += f' {"#" * 40}\n'
     else:
         console = f'\n\n {"*" * 40}\n'
         console += f' We did it Reddit! (Nice work fam ^_^)\n'

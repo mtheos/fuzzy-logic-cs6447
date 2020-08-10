@@ -49,6 +49,7 @@ class FuzzOrchestrator:
             self._checkOrchestrator._final_input = e
             self._runner.shutdown()
             self._stat_printer.join()
+            raise
 
     def _run_(self, binary):
         while True:
