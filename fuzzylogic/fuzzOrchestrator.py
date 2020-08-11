@@ -1,10 +1,11 @@
-import os
 import time
 import psutil
 import resource
 from queue import PriorityQueue, Queue
 from threading import Thread
 from .strategy import Strategy
+
+
 class FuzzOrchestrator:
     def __init__(self, mutator, runner):
         self._seen = dict()
@@ -223,23 +224,15 @@ class MutateOrchestrator:
 
     def create_more_inputs(self):
         # creating inputs is memory and time expensive, pause creating inputs if we have a lot ready to run
-        if self.awaiting_fuzzing() > 100000: #self._limits['MIN_QUEUED_INPUTS']:
+        if self.awaiting_fuzzing() > self._limits['MIN_QUEUED_INPUTS']:
             return
         while not self._to_mutate.empty() and self.awaiting_fuzzing() < self._limits['MAX_QUEUED_INPUTS']:
             _input = self._to_mutate.get()
             trace_info = self._seen[_input]
             things_so_far = len(self._seen.keys()) + self._fuzzer_inputs._qsize()
-            #big TODO: this is the switch from the 'early' strategies to the 'late' strategies. 
-            #late strategies are more random. later we will detect how long the program has run and do the
-            #late strategies later.
-
-
-
-            #improtant not: make this small when testing (for instant results), but higher in submission for 
-            #better coverage
-            EARLY_LATE_SWITCH = 100
-
-            if things_so_far < EARLY_LATE_SWITCH:
+            # late strategies are more random
+            switch_threshold = 100
+            if things_so_far < switch_threshold:
                 strats = Strategy.EARLY_STRATEGIES
             else:
                 strats = Strategy.LATE_STRATEGIES
