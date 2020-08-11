@@ -8,10 +8,8 @@ Andrew Kaploun, Frances Lee, Aran Pando, Michael Theos
 
 
 
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
-
-![alt_text](images/image1.png "image_tooltip")
+![beautiful](https://i.imgur.com/mgv0XQo.png "image_tooltip")
 
 
 
@@ -29,20 +27,20 @@ The execution flow of our program is shown below, extended from our midpoint sub
 
 ```
 while true:
-while hasInputs() and not tooManyRunning():
-    input <- getInput()
-    async queueRun(input)
-while existsCompletedRuns():
-    resultStats <- getResult()
-    if resultStats.isCrash():
-        finish_and_record_success()
-    cache[input] = resultStats
-    mutateEventually(resultStats)
-while existsInputsToMutate()and not tooManyQueued():
-    prevResult <- getMutate()
-    for tactic in tactics:
-        for mutation in $TYPE_mutator(prevResult, tactic):
-            newInput(mutation)
+    while hasInputs() and not tooManyRunning():
+        input <- getInput()
+        async queueRun(input)
+    while existsCompletedRuns():
+        resultStats <- getResult()
+        if resultStats.isCrash():
+            finish_and_record_success()
+        cache[input] = resultStats
+        mutateEventually(resultStats)
+    while existsInputsToMutate()and not tooManyQueued():
+        prevResult <- getMutate()
+        for tactic in tactics:
+            for mutation in $TYPE_mutator(prevResult, tactic):
+                newInput(mutation)
 ```
 
 
