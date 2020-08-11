@@ -95,7 +95,7 @@ class FuzzOrchestrator:
             console += f' Ctrl+C to exit\n'
             print(console)
             if self._checkOrchestrator.final_result()[0] is not None:
-                print('\n\n *************')
+                print('\n *************')
                 if self._checkOrchestrator.final_result()[0] == 6447:
                     print(' User exit')
                 else:
