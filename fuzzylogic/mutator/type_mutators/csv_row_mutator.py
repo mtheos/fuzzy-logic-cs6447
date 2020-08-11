@@ -9,7 +9,6 @@ class CsvRowMutator:
     def mutate(self, csv, num=0):  # choose one mutating option
         if num == 0:
             num = random.randint(1, 10)
-            # print(num)
         for i in range(num):
             self._add_row_(csv)
         return csv

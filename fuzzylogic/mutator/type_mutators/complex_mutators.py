@@ -38,7 +38,6 @@ class ObjectMutator:
         ]  # fill options with add_xyz functions
         mutator = random.choice(options)
         obj[f'new_key_{self.seed}'] = mutator()
-        # print(f'-- Added: "new_key_{self.seed} {obj[f"new_key_{self.seed}"]}')
         return obj
 
     @staticmethod
@@ -46,7 +45,6 @@ class ObjectMutator:
         if len(list(obj.keys())) == 0:
             return obj
         rand_key = random.choice(list(obj.keys()))
-        # print(f'-- Removed: {rand_key} {obj[rand_key]}')
         del obj[rand_key]
         return obj
 
@@ -172,7 +170,6 @@ class ListMutator:
             self._new_float_]  # fill options with add_xyz functions
         mutator = random.choice(options)
         lis.append(mutator())
-        # print(f'-- Added: {lis[::-1]}')
         return lis
 
     @staticmethod
@@ -180,7 +177,6 @@ class ListMutator:
         if len(lis) < 1:
             return lis
         rand_pos = random.randint(0, len(lis) - 1)
-        # print(f'-- Removed: {lis[rand_pos]}')
         del lis[rand_pos]
         return lis
 
@@ -205,8 +201,6 @@ class ListMutator:
             lis[rand_pos] = self._get_mutator_(dict).mutate(lis[rand_pos])
         elif field_type is None:
             print("Null mutator goes brrrrrr (doesn't exist, pls implement???)")
-
-        # print(f'-- Mutated: {rand_pos} {lis[rand_pos]}')
 
         return lis
 

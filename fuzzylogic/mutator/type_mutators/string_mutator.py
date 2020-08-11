@@ -30,14 +30,12 @@ class StringMutator:
         if s == '':
             return s
         pos = random.randint(0, len(s) - 1)
-        # print('--Deleting', repr(s[pos]), 'at', pos)
         return s[:pos] + s[pos + 1:]
 
     @staticmethod
     def _insert_rand_chars_(s):
         pos = random.randint(0, len(s))
         random_character = chr(random.randrange(32, 127))
-        # print('--Inserting', repr(random_character), 'at', pos)
         return s[:pos] + random_character + s[pos:]
 
     @staticmethod
@@ -51,7 +49,6 @@ class StringMutator:
         if temp in [0x0, 0xa]:
             temp = ord(c)
         new_c = chr(temp)
-        # print('--Flipping', bit, 'in', repr(c) + ', giving', repr(new_c))
         return s[:pos] + new_c + s[pos + 1:]
 
     @staticmethod
@@ -124,8 +121,7 @@ class StringMutator:
             return mutation_list
 
         else:
-            return [i]  # lets return itself for no strategy.
-            # raise(KeyError('Please put in a proper strategy!'))
+            return [i] 
 
     @staticmethod
     def bitflipping(i):

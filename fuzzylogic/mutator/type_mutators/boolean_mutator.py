@@ -11,7 +11,7 @@ class BooleanMutator:
 
     @staticmethod
     def deterministic_mutator(i, strategy):
-        # todo: do different shit depending on the strategy
+
         if strategy == "true":
             return [True, 1, '1']
         if strategy == "false":

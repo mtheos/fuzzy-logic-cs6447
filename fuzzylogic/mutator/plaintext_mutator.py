@@ -114,5 +114,5 @@ class PlainTextMutator:
         if temp in [0x0, 0xa]:
             temp = ord(c)
         new_c = chr(temp)
-        # print('--Flipping', bit, 'in', repr(c) + ', giving', repr(new_c))
+
         return s[:pos] + new_c + s[pos + 1:]
