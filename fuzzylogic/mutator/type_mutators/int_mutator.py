@@ -30,22 +30,18 @@ class IntMutator:
         i -= random.randint(1, 1000000)
         return i
 
-    def deterministic_mutator(self, i, strategy):
+    @staticmethod
+    def deterministic_mutator(i, strategy):
         if strategy is Strategy.INCREMENT:
             return [i+1]
-
         if strategy is Strategy.DECREMENT:
             return [i-1]
-        
         if strategy is Strategy.ZERO:
             return [0]
-
         if strategy is Strategy.MAX:
             return [2**31-1]
-        
         if strategy is Strategy.MIN:
             return [-(2**31)]
-
         if strategy == Strategy.MAKE_ZERO:
             return [i-1, i+1, 0, 2**31-1, 0-2**31]
         else:

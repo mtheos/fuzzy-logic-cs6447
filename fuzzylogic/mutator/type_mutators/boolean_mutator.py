@@ -1,5 +1,6 @@
 from ...strategy import Strategy
 
+
 class BooleanMutator:
     def __init__(self):
         self.seed = 0

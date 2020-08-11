@@ -30,7 +30,8 @@ class FloatMutator:
         f -= random.uniform(1, 1000000)
         return f
 
-    def deterministic_mutator(self, i, strategy):
+    @staticmethod
+    def deterministic_mutator(i, strategy):
         if strategy is Strategy.INCREMENT:
             return [i+1]
         if strategy is Strategy.DECREMENT:

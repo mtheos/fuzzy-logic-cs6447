@@ -1,6 +1,7 @@
 import random
 from ...strategy import Strategy
 
+
 class StringMutator:
     def __init__(self):
         self.seed = 0
