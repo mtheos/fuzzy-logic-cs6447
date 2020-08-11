@@ -19,11 +19,8 @@ class PlainTextMutator:
         mutated_split = []
         crazy = []
         crazyy = []
-        for item in range(len(self._original)):
-            # print("we are mutating", self._original[item])
+        for item in range(len(self._original)): # goes through list of the different parts of the string to mutate
             type_item = self._get_type_(self._original[item])
-            # print("original",self._original[item])
-            # if strategy == "none":
             mutated = self._mutators[type_item].mutate(self._original[item])
             mutatedd = self.magic_byte_mutator(self._original[item])
             crazy.append(mutated)
@@ -32,14 +29,12 @@ class PlainTextMutator:
             copy[item] = mutated
             copyy = list(self._original)
             copyy[item] = mutatedd
-            # print("copy is", copy)
             mutated_split.append(copy)
             mutated_split.append(copyy)
-            # print("yield is currently", self.yields)
         mutated_split.append(crazy)
         mutated_split.append(crazyy)
 
-        for item in mutated_split:
+        for item in mutated_split: # concatenating the mutated parts together
             string = ""
             for items in item:
                 string += str(items)
@@ -56,9 +51,6 @@ class PlainTextMutator:
         Given plaintext input, break up the input into its respective types
         """
         nums = re.findall(r'-?\d+\.?\d*', _input)
-        # nums = [self._get_type_(x)(x) for x in nums]
-        # nums = [x for x in nums]
-        # print(nums)
 
         self._original = []
         for num in nums:
@@ -66,10 +58,8 @@ class PlainTextMutator:
             self._original.append(int(num) if self._is_int_(num) else float(num))
             n_min = _input.index(str(num)) + len(str(num))
             _input = _input[n_min:]
-        # print("nums is", nums)
+
         self._original.append(_input)
-        # print("before", self._original)
-        # self._original = list(filter(None, self._original))
         if self._original[-1] == "":
             del self._original[-1]
         return self._original 
