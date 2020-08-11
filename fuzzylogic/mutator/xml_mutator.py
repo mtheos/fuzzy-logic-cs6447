@@ -106,7 +106,7 @@ class XmlMutator:
                     original[k] = self._get_sample_element_()
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
-                else: # mutate a type (int, string, float)
+                else:  # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
                     if self._strategy != 'None':
@@ -256,7 +256,7 @@ class XmlMutator:
         string = 'sample_attr'
         
         new['@sample_attr_'+str(self._seed)] = string
-        new['#text'] = self._fat_type_mutation_(self._mutators[str],string)
+        new['#text'] = self._fat_type_mutation_(self._mutators[str], string)
         self._seed += 1
         return new
 
