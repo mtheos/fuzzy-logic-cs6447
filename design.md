@@ -258,3 +258,5 @@ We also don’t do a bunch of things that we planned on doing, because software 
 *   Being able to put in one strategy like ‘add a list of entries’ and have the mutator do only that strategy. Instead, for some strategies, we end up picking an arbitrary strategy at random, because that’s how we did it in the midpoint.
 
 Our thing is also non-deterministic. We had some software engineering problems making it pseudo-random, so our program is actually random and sometimes takes a long time to work.
+
+*page 2/2*
