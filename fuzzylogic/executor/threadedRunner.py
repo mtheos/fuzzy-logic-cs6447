@@ -4,16 +4,17 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor as PoolExecutor
 from .traceInfo import TraceInfo
 os.environ['PWNLIB_SILENT'] = '1'  # suppresses ELF
-try:
-    import pwn
-except Exception:
-    class pwn:  # pwn fails to import if your TTY doesn't support curses
-        class ELF:
-            def __init__(self, binary):
-                if 'xml3' in binary:
-                    self.arch = 'amd64'
-                else:
-                    self.arch = 'i386'
+import pwn
+# try:
+#     import pwn
+# except Exception:
+#     class pwn:  # pwn fails to import if your TTY doesn't support curses (this is for debugging)
+#         class ELF:
+#             def __init__(self, binary):
+#                 if 'xml3' in binary:
+#                     self.arch = 'amd64'
+#                 else:
+#                     self.arch = 'i386'
 
 
 class ThreadedRunner:
