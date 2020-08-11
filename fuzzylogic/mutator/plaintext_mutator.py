@@ -1,6 +1,6 @@
 import re
 import random
-
+from ..strategy import Strategy
 from .type_mutators import IntMutator
 from .type_mutators import FloatMutator
 from .type_mutators import StringMutator
@@ -13,8 +13,7 @@ class PlainTextMutator:
         self._original = None
         self._mutators = {str: StringMutator(), int: IntMutator(), float: FloatMutator()}
     
-    def mutate(self, _input, strategy='none'):
-        # print("jeff besos lol\n" + _input + "amazon is evil")
+    def mutate(self, _input, strategy=Strategy.NO_STRATEGY):
         self._analyse_(_input)
         self.yields = []
         mutated_split = []
@@ -27,8 +26,6 @@ class PlainTextMutator:
             # if strategy == "none":
             mutated = self._mutators[type_item].mutate(self._original[item])
             mutatedd = self.magic_byte_mutator(self._original[item])
-            # print("AAAAAAAAAAAAAAAAAAAA")
-            # mutated = self._mutators[type_item].deterministic_mutator(self._original[item], strategy)
             crazy.append(mutated)
             crazyy.append(mutatedd)
             copy = list(self._original)
@@ -52,10 +49,7 @@ class PlainTextMutator:
         for y in self.yields:
             if y[-1] != "\n":
                 y += "\n"
-            # print("GRRRRR" + _input + "GRRRRRRR")
             yield y
-
-        # return self.yields
 
     def _analyse_(self, _input):
         """
@@ -108,15 +102,10 @@ class PlainTextMutator:
     @staticmethod
     def _is_str_(v):
         try:
-            # raise ValueError('This error is in _is_str_ in csv mutator')
-            # OK, now that I have your attention. This function won't work
-            # Almost anything can be represented as a string, the str function
-            # will only fail if your input has non printable bytes \x00 \x01 etc
-            # You need to assume str if your other checks all fail
             str(v)
             return True
         except ValueError:
-            return False
+            raise Exception('Can you imagine something that will fail this?')  # non-printable bytes/surrogates need not apply
 
     @staticmethod
     def empty():

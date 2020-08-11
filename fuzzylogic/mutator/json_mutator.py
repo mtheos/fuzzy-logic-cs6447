@@ -20,30 +20,24 @@ class JsonMutator:
         self._static_mutators = {type(None): NullMutator, str: StringMutator(), int: IntMutator(), float: FloatMutator(), bool: BooleanMutator()}
 
     def mutate(self, json_input, strategy=Strategy.NO_STRATEGY):
-        # print('\n\n**********')
-        # print('Mutator called with input')
-        # print(json_input)
-        # print('**********\n\n')
-        if strategy != Strategy.NO_STRATEGY:#Strategy.MAKE_ZERO:
+        self._strategy = strategy
+        if self._strategy == Strategy.NO_STRATEGY:
+            self._analyse_(json_input)
+            for key in self._keys:
+                self._seed += 1
+                output = dict(self._original)
+                output = json.dumps(self._mutate_(output, key))
+                if output[-1] != '\n':
+                    output += '\n'
+                yield output
+        else:
             self._yields = []
-            self._strategy = strategy
             self._analyse_(json_input)
             self.recurse(self._original)
             for y in self._yields:
                 if y[-1] != '\n':
                     y += '\n'
                 yield y
-        else:
-            self._strategy = ''
-            self._analyse_(json_input)
-            for key in self._keys:
-                self._seed += 1
-                output = dict(self._original)
-                output = self._mutate_(output, key)
-                output = json.dumps(output)
-                if output[-1] != '\n':
-                    output += '\n'
-                yield output
 
     def recurse(self, original):
         # big TODO for andrew: make this also insert shit into dicts and lists
@@ -66,7 +60,6 @@ class JsonMutator:
                         original[k] = mutation
                         self._yields.append(json.dumps(self._original))
                         original[k] = tmp
-                
         elif type(original) is list:
             for k in range(len(original)):
                 v = original[k]
