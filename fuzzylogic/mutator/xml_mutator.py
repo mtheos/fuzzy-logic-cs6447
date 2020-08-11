@@ -33,15 +33,17 @@ class XmlMutator:
     """
 
     def mutate(self, xml_input, strategy=Strategy.NO_STRATEGY):
-        self._yields = []
         try:
             self._analyse_(xml_input)
         except xml.parsers.expat.ExpatError:  # parser cannot parse input, ignore this input
             return []
+        self._yields = []
         self._preprocessing_recurse_(self._original)
         # print(self._original)
         self._strategy = strategy
         self.recurse(self._original)
+        if self._strategy == Strategy.MAX:
+            self._make_big_()
         for y in self._yields:
             if y[-1] != '\n':
                 y += '\n'
@@ -109,37 +111,17 @@ class XmlMutator:
                 else:  # mutate a type (int, string, float)
                     v_type = self._get_type_(v)
                     typed_v = v_type(v)
-                    if self._strategy != 'None':
+                    if self._strategy == Strategy.NO_STRATEGY:
+                        mutation = self._fat_type_mutation_(self._mutators[v_type], typed_v)
+                    else:
                         determ_mutations = self._mutators[v_type].deterministic_mutator(typed_v, self._strategy)
                         if len(determ_mutations) < 2 and determ_mutations[0] == typed_v:
-                            # print("LELELLELELELELELELEL")
-                            mutation = self._fat_type_mutation_(self._mutators[v_type],typed_v)
+                            mutation = self._fat_type_mutation_(self._mutators[v_type], typed_v)
                         else:
                             mutation = random.choice(self._mutators[v_type].deterministic_mutator(typed_v, self._strategy))
-                    else:
-                        mutation = self._fat_type_mutation_(self._mutators[v_type],typed_v)
-                    
                     original[k] = str(mutation)
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = v
-                    
-                    # if self._strategy != 'None':
-                    #     v_type = self._get_type_(v)
-                    #     typed_v = v_type(v)
-                    #     determ_mutations = self._mutators[v_type].deterministic_mutator(typed_v, self._strategy)
-                    #     if len(determ_mutations) < 2:
-                    #         continue
-                    #     mutation in random.choice(self._mutators[v_type].deterministic_mutator(typed_v, self._strategy))
-                    #     original[k] = str(mutation)
-                    #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    #     original[k] = v
-                    # else:
-                    #     v_type = self._get_type_(v)
-                    #     typed_v = v_type(v)
-                    #     original[k] = str(self._fat_type_mutation_(self._mutators[v_type],typed_v))
-                    #     self._yields.append(xmltodict.unparse(self._original, full_document=False))
-                    #     original[k] = v
-
         elif type(original) is list:
             for k in range(len(original)):
                 v = original[k]
@@ -159,6 +141,18 @@ class XmlMutator:
                     original[k] = self._get_sample_element_()
                     self._yields.append(xmltodict.unparse(self._original, full_document=False))
                     original[k] = None
+
+    def _make_big_(self):
+        flat = '<html>'
+        flat += '<flat>hi</flat>' * 50000
+        flat += '</html>'
+
+        nested = '<html>'
+        nested += '<nested>' * 50000
+        nested += 'hi'
+        nested += '</nested>' * 50000
+        nested += '</html>'
+        self._yields.extend([flat, nested])
 
     """
     Performs each of these mutations on the ordred dict
@@ -247,7 +241,7 @@ class XmlMutator:
 
     @staticmethod
     def _fat_type_mutation_(mutator, elem):
-        for i in range(random.randint(1,5)):
+        for i in range(random.randint(1, 5)):
             elem = mutator.mutate(elem)
         return elem
 
@@ -293,7 +287,7 @@ class XmlMutator:
             str(v)
             return True
         except ValueError:
-            raise Exception('Can you imagine something that will fail this?')
+            raise Exception('Can you imagine something that will fail this?')  # non-printable bytes/surrogates need not apply
 
     @staticmethod
     def _is_none_(v):
