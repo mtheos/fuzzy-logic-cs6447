@@ -94,7 +94,17 @@ class ThreadedRunner:
         # Return value doesn't matter either as the main thread won't look at it anymore
         if cls._shutdown:
             return
-        run_binary = f'{binary} >/dev/null 2>/dev/null <<\'EOF\'\n{_input}EOF'
+        input_file = f'/dev/shm/input_{task_id}'
+        trace_file = f'/dev/shm/trace_{task_id}'
+        fd = os.open(input_file, os.O_WRONLY | os.O_CREAT, 0o644)
+        try:
+            os.write(fd, _input.encode())
+        except UnicodeEncodeError:
+            os.close(fd)
+            os.remove(input_file)
+            return -1, _input, TraceInfo([], architecture)
+        os.close(fd)
+        run_binary = f'{binary} > /dev/null 2> /dev/null < {input_file}'
         if architecture not in ['i386', 'amd64']:
             code = os.system(run_binary)
             trace_data = []
@@ -103,22 +113,18 @@ class ThreadedRunner:
                 qemu = 'qemu-i386'
             else:  # 'amd64'
                 qemu = 'qemu-x86_64'
-            trace_file = f'/dev/shm/trace_{task_id}'
-            max_file_size = int(1e6)  # if it's bigger than this, dont bother
-            try:
-                code = os.system(f'{qemu} -d exec -D {trace_file} {run_binary}')
-            except UnicodeEncodeError:
-                return -1, _input, TraceInfo([], architecture)
+            code = os.system(f'{qemu} -d exec -D {trace_file} {run_binary}')
+            max_file_size = int(1.5e7)  # 95% of traces are <= 15mb
             fd = os.open(trace_file, os.O_RDONLY)
             trace_file_data = os.read(fd, max_file_size)
             os.close(fd)
             os.remove(trace_file)
             trace_data = cls._get_trace_(trace_file_data, architecture)
+        os.remove(input_file)
         # the return value from os.system is 2 bytes
         # the high byte is the exit code and the low byte is the signal (if any)
         # so >> 8 will get just the exit code
         # performance hit of shift right is 50% so check!
-        # code = 0  # Sometimes I need it to run longer
         if code != 0:
             code >>= 8
         return code, _input, TraceInfo(trace_data, architecture)
