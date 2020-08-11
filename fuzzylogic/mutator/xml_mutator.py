@@ -39,7 +39,6 @@ class XmlMutator:
             return []
         self._yields = []
         self._preprocessing_recurse_(self._original)
-        # print(self._original)
         self._strategy = strategy
         self.recurse(self._original)
         if self._strategy == Strategy.MAX:

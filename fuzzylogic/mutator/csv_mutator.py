@@ -1,37 +1,28 @@
 import csv
 from io import StringIO
+from ..strategy import Strategy
 from .type_mutators import IntMutator
 from .type_mutators import FloatMutator
 from .type_mutators import StringMutator
 from .type_mutators import CsvRowMutator
 
-from ..strategy import Strategy
 
 class CsvMutator:
     def __init__(self):
         self._seed = 0
         self._mutators = {}
         self._row_mutator = CsvRowMutator()
+        self._strategy = None
         self._original = None  # Dictionary of json
         self._has_headers = False
         self._headers = None  # List of keys in json
         self._field_type = None  # Dictionary of key:type
 
-    # return a generator (i.e. list)
     def mutate(self, csv_input, strategy=Strategy.NO_STRATEGY):
-        # print('\n\n**********')
-        # print('Mutator called with input')
-        # print(csv_input)
-        # print('**********\n\n')
         self._analyse_(csv_input)
-        # output = list([list(x) for x in self._original])
-        # for i in range(20):
-        #     self._row_mutator.mutate(output)
-        #     stream = StringIO()
-        #     csv.writer(stream).writerows(output)
-        #     output2 = stream.getvalue()
-        #     output2 = output2.replace('\r', '')
-        #     yield output2
+        self._strategy = strategy
+        if self._strategy == Strategy.MAX:
+            self._make_big_()
         start = 1 if self._has_headers else 0
         for idx in range(start, len(self._original)):
             for jdx in range(len(self._original[idx])):
@@ -50,6 +41,14 @@ class CsvMutator:
         output = stream.getvalue()
         output = output.replace('\r', '')
         yield output
+
+    @staticmethod
+    def _make_big_():
+        long = 'long\n' * 50000
+
+        other_long = 'other_long,' * (50000 - 1)
+        other_long += 'other_long\n'
+        return [long, other_long]
 
     def _mutate_(self, output, idx, jdx):
         type_mutator = self._get_mutator_((idx, jdx))

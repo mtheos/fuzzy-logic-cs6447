@@ -21,8 +21,11 @@ class JsonMutator:
 
     def mutate(self, json_input, strategy=Strategy.NO_STRATEGY):
         self._strategy = strategy
-        if self._strategy == Strategy.NO_STRATEGY:
+        try:
             self._analyse_(json_input)
+        except RecursionError:
+            return  # probably a meme
+        if self._strategy == Strategy.NO_STRATEGY:
             for key in self._keys:
                 self._seed += 1
                 output = dict(self._original)
@@ -32,8 +35,9 @@ class JsonMutator:
                 yield output
         else:
             self._yields = []
-            self._analyse_(json_input)
             self.recurse(self._original)
+            if self._strategy == Strategy.MAX:
+                self._make_big_()
             for y in self._yields:
                 if y[-1] != '\n':
                     y += '\n'
@@ -73,6 +77,19 @@ class JsonMutator:
                         original[k] = mutation
                         self._yields.append(json.dumps(self._original))
                         original[k] = tmp
+
+    def _make_big_(self):
+        flat = '{'
+        flat += '"flat": "hi",' * (50000 - 1)
+        flat += '"flat": "hi"'
+        flat += '}'
+
+        nested = '{'
+        nested += '"nested": {' * 50000
+        nested += '"nested": "hi"'
+        nested += '}' * 50000
+        nested += '}'
+        self._yields.extend([flat, nested])
 
     def _mutate_(self, output, key):
         type_mutator = self._get_mutator_(key)
